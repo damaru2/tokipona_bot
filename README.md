@@ -1,4 +1,4 @@
-# tokipona_bot
+# tokipona_bot (ilo sitelen lon ilo Telegram)
 
 [@tokipona_bot](t.me/tokipona_bot)
 
