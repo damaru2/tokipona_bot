@@ -1,6 +1,6 @@
 # tokipona_bot (ilo sitelen lon ilo Telegram)
 
-[@tokipona_bot](t.me/tokipona_bot)
+[@tokipona_bot](https://t.me/tokipona_bot)
 
 toki! sina ken sitelen kepeken linja pona kepeken ilo ni! sitelen ni li pini, sina sitelen e "/".
 
