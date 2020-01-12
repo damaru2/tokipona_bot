@@ -1,0 +1,9 @@
+private
+data
+log
+.idea
+ghostdriver.log
+./src/ghostdriver.log
+./src/__pychache__
+
+

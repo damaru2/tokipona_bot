@@ -1,0 +1,45 @@
+#! /bin/zsh
+# /etc/init.d/tokiponabot
+
+#VAR
+TP_PID=$(ps -Ao "%p,%a" | grep 'python3 -u src/tokiponabot.py'| grep -v grep| cut -f1 -d ',')
+
+cd "$(dirname "$0")"
+cd ..
+
+
+# Carry out specific functions when asked to by the system
+case "$1" in
+start)
+echo "Starting tokiponabot"
+if [ -z "$TP_PID" ]; then
+bash -c 'nohup setsid python3 -u src/tokiponabot.py >> log/tokiponalog 2>&1 &'
+echo "tokiponabot is now in the house"
+else
+echo "tokiponabot was already in the house"
+fi
+;;
+stop)
+echo "Stopping tokiponabot"
+if [ ! -z "$TP_PID" ]; then
+sudo bash -c "kill -s SIGKILL $TP_PID"
+echo "tokiponabot is no longer in the house"
+else 
+echo "tokiponabot was not in the house"
+fi
+;;
+status)
+if [ ! -z "$TP_PID" ]; then
+echo "tokinponabot is in the house with pid= $TP_PID"
+else
+echo "tokinponabot is not in the house"
+fi
+;;
+*)
+echo "Usage: /etc/init.d/tokiponabot {start|stop|status}"
+exit 1
+;;
+esac
+
+exit 0
+
