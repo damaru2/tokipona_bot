@@ -33,11 +33,7 @@ def generate_url(query):
     query = re.sub(r'/(\d*).*', r'/\1', query)
     query, arg = query.split('/',1)
 
-    if arg:
-        arg = int(arg)
-        if not(1 <= arg <= 10):
-            arg = ''
-
+    query = re.sub(r'_+', r'_', query)
     query = re.sub(r'([a-zA-Z])([^a-zA-Z ])', r'\1 \2', query)
     query = re.sub(r'([^a-zA-Z ])([a-zA-Z])', r'\1 \2', query)
 
@@ -48,17 +44,23 @@ def generate_url(query):
     # It also makes vocabulary words lowercase
     nq = []
     i = 0
-    for elem in query.split(sep=' '):
+    split_q = query.split(sep=' ')
+    multiline = False
+    for idx, elem in enumerate(split_q):
         if i >= 10:
             nq.append('\n')
+            multiline = True
             i=0
         if elem.lower() in vocabulary:
             nq.append(elem.lower())
             i += 1
         else:
-            if '\n' in elem:
+            if elem == '_' and len(split_q) > idx+1 and split_q[idx+1] in vocabulary:
+                nq.append(elem)
+            elif '\n' in elem:
                 i = 0
                 nq.append(elem)
+                multiline = True
             elif i+len(elem) > 10:
                 nq.append('\n')
                 nq.append(elem)
@@ -71,11 +73,12 @@ def generate_url(query):
     # oo is o in the website, so we change a single o by oo
     query = re.sub(r'(^| )o($| )', r'\1oo\2', query)
     # escape
-    query = urllib.parse.quote(query)
     query = re.sub(r' +', r' ', query)
-    query += '   &s=30'
-    if arg:
-        query += '&f={}'.format(arg)
+    query += ' '* (10-i)
+    if not multiline:
+        query += '\n'
+    query = urllib.parse.quote(query)
+    query += '    &s=30'
     return "http://lp.plop.me/?m={}".format(query)
 
 
