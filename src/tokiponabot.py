@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from telegram.ext import Updater, CommandHandler, InlineQueryHandler
-from telegram import InlineQueryResultCachedPhoto
+from telegram import InlineQueryResultCachedPhoto, InlineQueryResultCachedSticker
 from uuid import uuid4
 import logging
 import urllib.parse
@@ -45,11 +45,9 @@ def generate_url(query):
     nq = []
     i = 0
     split_q = query.split(sep=' ')
-    multiline = False
     for idx, elem in enumerate(split_q):
         if i >= 10:
             nq.append('\n')
-            multiline = True
             i=0
         if elem.lower() in vocabulary:
             nq.append(elem.lower())
@@ -60,7 +58,6 @@ def generate_url(query):
             elif '\n' in elem:
                 i = 0
                 nq.append(elem)
-                multiline = True
             elif i+len(elem) > 10:
                 nq.append('\n')
                 nq.append(elem)
@@ -74,11 +71,9 @@ def generate_url(query):
     query = re.sub(r'(^| )o($| )', r'\1oo\2', query)
     # escape
     query = re.sub(r' +', r' ', query)
-    query += ' '* (10-i)
-    if not multiline:
-        query += '\n'
     query = urllib.parse.quote(query)
-    query += '    &s=30'
+    query += '&s=30&t=webp'
+
     return "http://lp.plop.me/?m={}".format(query)
 
 
@@ -88,11 +83,18 @@ def inlinequery(bot, update):
     if '/' not in query:
         return
 
+    messages = bot.sendSticker(magic_chat_id, generate_url(query), timeout=60)
+    results = [InlineQueryResultCachedSticker(
+        id=uuid4(),
+        sticker_file_id=messages.sticker.file_id,
+    )]
+    '''
     messages = bot.sendPhoto(magic_chat_id, generate_url(query), timeout=60)
     results = [InlineQueryResultCachedPhoto(
         id=uuid4(),
         photo_file_id=messages.photo[-1].file_id,
     )]
+    '''
     bot.answerInlineQuery(update.inline_query.id, results=results)
 
 
