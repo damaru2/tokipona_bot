@@ -1,0 +1,13 @@
+You can use [linja pona](https://github.com/davidar/linja-pona/) with this bot (font of [sitelen pona](http://tokipona.net/tp/janpije/hieroglyphs.php)). To use this bot, write its name in a chat, then some words and finish the sentence with a slash (i.e. /  ). Example:
+
+`@tokipona_bot ni li pona mute tawa mi /`
+
+After writing the slash an image will appear in a moment and then you can click it to send it.
+
+You can write compound words (noun + adjective) by concatenating the words. Not all combinations are available. Example:
+
+`@tokipona_bot tokipona li pona tawa mi /`
+
+You can draw a rectangle for names by surrounding several words by \[ ] and adding a \_ before each word. Example:
+
+`@tokipona_bot ma [_kasi_alasa_nasin_awen_telo_a] li suli / `
