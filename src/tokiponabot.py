@@ -74,8 +74,9 @@ def generate_url(query):
     query = re.sub(r'(^| )o($| )', r'\1oo\2', query)
     # escape
     query = re.sub(r' +', r' ', query)
+    query += ' '*(9-i)
     query = urllib.parse.quote(query)
-    query += '&s=30&t=webp'
+    query += '    &s=30&t=webp'
 
     return "http://lp.plop.me/?m={}".format(query)
 
