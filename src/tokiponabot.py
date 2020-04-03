@@ -101,7 +101,11 @@ def start(bot, update):
 def help(bot, update):
     with open('help.txt', 'r') as f:
         text = f.read()
-    result = bot.send_photo(update.message.chat_id, photo=id_photo_help, caption=text, parse_mode='Markdown')
+
+    url_photo_help = '''http://lp.plop.me/?m=%0D%0Ani+li+pona+mute+tawa+mi%20%0D%0A%0D%0Atoki-pona+li+pona+tawa+mi%20%0D%0A%0D%0Ama+[_%20kasi+_%20alasa+_%20nasin+_%20awen+_%20telo+_%20a%20]+li+suli%20%0D%0A%0D%0Ajan+pi+sona+ala+li+ken+kama+sona+kepeken+ni%20%20%20%20%20%20%20%20%20%20%20%20%20%0D%0A%0D%0A%0D%0A%0D%0A&s=200&f=1&t=jpg'''
+
+    result = bot.send_photo(update.message.chat_id, photo=url_photo_help, caption=text, parse_mode='Markdown')
+    print(result)
 
 def main():
     # Get the dispatcher to register handlers
