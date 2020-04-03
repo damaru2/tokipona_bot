@@ -85,13 +85,15 @@ def inlinequery(bot, update):
     if '/' not in query:
         return
 
-    messages = bot.sendSticker(magic_chat_id, generate_url(query), timeout=60)
+    message = bot.sendSticker(magic_chat_id, generate_url(query), timeout=60)
     results = [InlineQueryResultCachedSticker(
         id=uuid4(),
-        sticker_file_id=messages.sticker.file_id,
+        sticker_file_id=message.sticker.file_id,
     )]
 
     bot.answerInlineQuery(update.inline_query.id, results=results)
+
+    bot.delete_message(chat_id=magic_chat_id, message_id=message.message_id)
 
 
 def start(bot, update):
