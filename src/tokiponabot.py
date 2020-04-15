@@ -2,13 +2,17 @@
 # -*- coding: utf-8 -*-
 
 from telegram.ext import Updater, CommandHandler, InlineQueryHandler, ChosenInlineResultHandler, CallbackQueryHandler
-from telegram import InlineQueryResultCachedPhoto, InlineQueryResultCachedSticker
+from telegram import InlineQueryResultCachedPhoto, InlineQueryResultCachedSticker, InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto
 from uuid import uuid4
 import logging
 import urllib.parse
 import re
 
-from private.private_conf import token_id, magic_chat_id, id_photo_help
+from private.private_conf import *
+
+from database import TokiPonaDB
+from enums import Colors, Selectable, Fonts, fonts_dict, colors_dict
+
 
 # Enable logging
 logging.basicConfig(
@@ -25,12 +29,16 @@ updater = Updater(token_id)
 # Extended vocabulary
 vocabulary = ["a", "akesi", "alasa", "anpa", "ante", "awen", "ala", "ali", "ale", "anu", "e", "en", "esun", "insa", "ijo", "ike", "ilo", "jaki", "jelo", "jan", "jo", "kalama", "kulupu", "kiwen", "kala", "kama", "kasi", "ken", "kepeken", "kili", "kule", "kute", "kon", "ko", "linja", "lukin", "lape", "laso", "lawa", "lete", "lili", "lipu", "loje", "luka", "lupa", "len", "lon", "la", "li", "monsi", "mama", "mani", "meli", "mije", "moku", "moli", "musi", "mute", "mun", "ma", "mi", "mu", "nanpa", "nasin", "nasa", "nena", "nimi", "noka", "ni", "oo", "olin", "open", "ona", "pakala", "palisa", "pimeja", "pilin", "pali", "pana", "pini", "pipi", "poka", "poki", "pona", "pan", "pi", "pu", "sitelen", "sijelo", "sinpin", "soweli", "sama", "seli", "selo", "seme", "sewi", "sike", "sina", "sona", "suli", "suno", "supa", "suwi", "sin", "tenpo", "taso", "tawa", "telo", "toki", "tomo", "tan", "tu", "utala", "unpa", "uta", "walo", "waso", "wawa", "weka", "wile", "wan", "zz", "_65535", "spacespace", "commaspace", "periodspace", "colonspace", "exclamspace", "questionspace", "kin", "kinexclam", "kipisi", "leko", "monsuta", "namako", "oko", "pake", "anpalawa", "ijoike", "ijolili", "ijopona", "ijouta", "ilokipisi", "ilolape", "ilomusi", "ilonanpa", "iloopen", "ilosuno", "ilotoki", "ilolukin", "ilomoli", "ilooko", "janala", "janalasa", "janali", "janale", "janike", "jankala", "jankasi", "jankalama", "jankulupu", "janlawa", "janlili", "janmute", "jannasa", "janolin", "janpakala", "janpali", "janpoka", "janpona", "jansama", "janseme", "jansewi", "jansin", "jansona", "jansuli", "jansuwi", "jantoki", "janunpa", "janutala", "janwawa", "janante", "kalalili", "kalalete", "kalamamusi", "kasilili", "kilijelo", "kililaso", "kililili", "kililoje", "kilipalisa", "kilisuwi", "kilipimeja", "kiliwalo", "kokasi", "kokule", "kojaki", "kolete", "kolili", "koseli", "konasa", "kowalo", "kojelo", "kolaso", "koloje", "kopimeja", "konlete", "lenjelo", "lenlaso", "lenloje", "lenjan", "lenlawa", "lenluka", "lennoka", "lenpimeja", "lensin", "lenwalo", "linjalili", "linjapona", "lipukasi", "liputoki", "lipusona", "lipunanpa", "lipusewi", "lukaluka", "lupakiwen", "lupajaki", "lupakute", "lupameli", "lupamonsi", "lupanena", "lupalili", "lupatomo", "mamamama", "mamameli", "mamamije", "meliike", "melipona", "melilili", "melisama", "meliunpa", "mijeike", "mijepona", "mijelili", "mijesama", "mijeunpa", "mijewawa", "musilili", "nenakon", "nenakute", "nenalili", "nenamama", "nenameli", "palisalili", "pilinala", "pilinike", "pilinnasa", "pilinpakala", "pilinpona", "pilinsama", "pokikon", "pokilete", "pokiseli", "pokitelo", "pokilili", "pokilen", "sikelili", "sitelentawa", "sonaala", "sonalili", "sonaike", "sonama", "sonananpa", "sonapona", "sonasijelo", "sonatenpo", "sonatoki", "sonautala", "selolen", "selosoweli", "supalape", "supalawa", "supamoku", "supamonsi", "supapali", "supalupa", "telolete", "telolili", "tokiala", "tokiike", "tokipona", "tokisona", "tokiutala", "tokisin", "tomolape", "tomomani", "tomomoku", "tomonasin", "tomopali", "tomosona", "tomotawa", "tomounpa", "tomoutala", "tutu", "tuwan", "wantu", "ijomonsuta", "janmonsuta", "tomomonsuta", "sitelenmonsuta", "sitelenike", "sitelenpona", "sitelenma", "sitelensitelen", "sitelentoki", "maali", "maale", "makasi", "matomo", "kiwenjelo", "kiwenlaso", "kiwenlili", "kiwenloje", "kiwenmun", "kiwenpimeja", "kiwensuno", "kiwenwalo", "kiwenkasi", "kiwenlete", "kiwenseli", "ikeala", "ikelili", "ikelukin", "ponaala", "ponalili", "ponalukin", "lenlili", "ijoakesi", "ijoala", "ijoalasa", "ijoali", "ijoale", "ijoanpa", "ijoante", "ijoanu", "ijoawen", "ijoen", "ijoesun", "ijoilo", "ijoinsa", "ijojaki", "ijojan", "ijojelo", "ijojo", "ijokala", "ijokalama", "ijokama", "ijokasi", "ijoken", "ijokepeken", "ijokili", "ijokiwen", "ijoko", "ijokon", "ijokule", "ijokulupu", "ijokute", "ijolape", "ijolaso", "ijolawa", "ijolen", "ijolete", "ijolinja", "ijolipu", "ijoloje", "ijolon", "ijoluka", "ijolukin", "ijolupa", "ijoma", "ijomama", "ijomani", "ijomeli", "ijomi", "ijomije", "ijomoku", "ijomoli", "ijomonsi", "ijomu", "ijomun", "ijomusi", "ijomute", "ijonanpa", "ijonasa", "ijonasin", "ijonena", "ijoni", "ijonimi", "ijonoka", "ijoolin", "ijoona", "ijoopen", "ijopakala", "ijopali", "ijopalisa", "ijopan", "ijopana", "ijopilin", "ijopimeja", "ijopini", "ijopipi", "ijopoka", "ijopoki", "ijopu", "ijosama", "ijoseli", "ijoselo", "ijoseme", "ijosewi", "ijosijelo", "ijosike", "ijosin", "ijosina", "ijosinpin", "ijositelen", "ijosona", "ijosoweli", "ijosuli", "ijosuno", "ijosupa", "ijosuwi", "ijotan", "ijotaso", "ijotawa", "ijotelo", "ijotenpo", "ijotoki", "ijotomo", "ijotu", "ijounpa", "ijoutala", "ijowalo", "ijowan", "ijowaso", "ijowawa", "ijoweka", "ijowile", "ijokin", "ijokipisi", "ijoleko", "ijonamako", "ijooko", "ijopake"]
 
+def edit_message_text(text, id_chat, id_message, reply_markup, bot):
+    bot.editMessageText(text=text, chat_id=id_chat, reply_markup=reply_markup, message_id=id_message)
+
 
 def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"' % (update, error))
 
 
-def generate_url(query):
+
+def generate_url(query, id_chat, image_format='webp', size=30):
     #query = re.sub(r'/(\d*).*', r'/\1', query)
     query, arg = query.split('/', 1)
 
@@ -74,7 +82,22 @@ def generate_url(query):
     query = re.sub(r' +', r' ', query)
     query += ' '*(9-i)
     query = urllib.parse.quote(query)
-    query += '    &s=30&t=webp'
+    db = TokiPonaDB()
+    try:
+        font_type, font_color, background_color = db.get_data(id_chat)
+    except TypeError: # User non existent
+        db.insert_new_user(id_chat)
+        font_type, font_color, background_color = db.get_data(id_chat)
+
+    font_color = str(font_color)
+    if len(font_color) != 6:
+        font_color = '0'*(6-len(font_color)) + str(font_color)
+
+    background_color = str(background_color)
+    if len(background_color) != 6:
+        background_color = '0'*(6-len(background_color)) + str(background_color)
+
+    query += '    &s={}&f={}&c={}&b={}&t={}'.format(size, font_type, font_color, background_color, image_format)
 
     return "http://lp.plop.me/?m={}".format(query)
 
@@ -85,7 +108,8 @@ def inlinequery(bot, update):
     if '/' not in query:
         return
 
-    message = bot.sendSticker(magic_chat_id, generate_url(query), timeout=60)
+    id_chat = update.effective_user.id
+    message = bot.sendSticker(magic_chat_id, generate_url(query, id_chat), timeout=60)
     results = [InlineQueryResultCachedSticker(
         id=uuid4(),
         sticker_file_id=message.sticker.file_id,
@@ -100,14 +124,115 @@ def start(bot, update):
     bot.sendMessage(update.message.chat_id, text='toki! sina wile kama sona e ilo ni la o luka e ni: /help. sina ken sitelen kepeken linja pona kepeken ilo ni! sitelen ni li pini, sina sitelen e "/".\n\nHi! I you want to learn all you can do with the bot, click here: /help. You can use linja pona with this bot. Use it online and append "/" to your sentence. You can add enters for the generated images.')
 
 
+def settings(bot, update, edit_message_or_not=False, extra_text=''):
+    # This is only allowed in private chats
+    if not edit_message_or_not and update.message.chat_id != update.message.from_user.id:
+        return
+
+    keyboard = [[InlineKeyboardButton("Font Type", callback_data=str(Selectable.change_font_type.value))],
+                [InlineKeyboardButton("Font Color", callback_data=str(Selectable.change_font_color.value))],
+                [InlineKeyboardButton("Background Color", callback_data=str(Selectable.change_background_color.value))]]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    text = '{}Do you want to change the font type or the color of your Toki Pona messages?'.format(extra_text)
+
+    if edit_message_or_not:
+        query = update.callback_query
+        bot.edit_message_media(chat_id=query.message.chat_id,
+                               message_id=query.message.message_id,
+                               media=InputMediaPhoto(generate_url(query='wile sina /', id_chat=query.message.chat_id, image_format='jpg', size=50), caption=text),
+                               reply_markup=reply_markup,
+                               )
+    else:
+        results = bot.send_photo(update.message.chat_id, photo=generate_url(query='wile sina /', id_chat=update.message.chat_id, image_format='jpg', size=50), caption=text, parse_mode='Markdown', reply_markup=reply_markup, timeout=60)
+
+
+def buttons(bot, update):
+    query = update.callback_query
+    data = query.data.split('|')
+    if len(data) == 1:
+        if data[0] == Selectable.change_font_type.value:
+            fonts_available = [Fonts.linja_pona_jan_same, Fonts.linja_leko_jan_selano, Fonts.sitelen_luka_tu_tu_jan_inkepa, Fonts.sitelen_pona_jan_wesi, Fonts.linja_pimeja_jan_inkepa, Fonts.sitelen_pi_linja_ko_jan_inkepa,]
+            keyboard = []
+            for font in fonts_available:
+                keyboard.append([InlineKeyboardButton(fonts_dict[font.value], callback_data="{}|{}".format(Selectable.change_font_type.value, font.value))])
+            keyboard.append([InlineKeyboardButton('Go back', callback_data="{}".format(Selectable.go_back.value))])
+
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            db = TokiPonaDB()
+            font_type, _, _ = db.get_data(query.message.chat_id)
+            font_type = str(font_type)
+
+            text = '''Pick a font. Current is {}.'''.format(fonts_dict[font_type])
+            bot.edit_message_media(chat_id=query.message.chat_id,
+                                   message_id=query.message.message_id,
+                                   media=InputMediaPhoto(id_photo_nasin_sitelen, caption=text),
+                                   reply_markup=reply_markup,
+                                   )
+        elif data[0] == Selectable.change_font_color.value:
+            colors_available = [Colors.pimeja, Colors.loje, Colors.jelo, Colors.loje_walo, Colors.laso_kasi, Colors.laso_kasi_walo, Colors.laso_sewi, Colors.laso_sewi_walo, Colors.pimeja_walo_walo, Colors.pimeja_walo, Colors.pimeja_pimeja_walo, Colors.pimeja_pimeja_pimeja_walo, Colors.walo, ]
+            keyboard = []
+            for color in colors_available:
+                keyboard.append([InlineKeyboardButton(colors_dict[color.value], callback_data="{}|{}".format(Selectable.change_font_color.value, color.value))])
+            keyboard.append([InlineKeyboardButton('Go back', callback_data="{}".format(Selectable.go_back.value))])
+
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            db = TokiPonaDB()
+            _, font_color, _ = db.get_data(query.message.chat_id)
+            font_color = str(font_color)
+            if len(font_color) != 6:
+                font_color = '0'*(6-len(font_color)) + str(font_color)
+
+            text = '''Pick a color for the font. Current is {}.'''.format(colors_dict[font_color])
+            bot.edit_message_media(chat_id=query.message.chat_id,
+                                   message_id=query.message.message_id,
+                                   media=InputMediaPhoto(id_photo_kule, caption=text),
+                                   reply_markup=reply_markup,
+                                   )
+        elif data[0] == Selectable.change_background_color.value:
+            colors_available = [Colors.pimeja, Colors.loje, Colors.jelo, Colors.loje_walo, Colors.laso_kasi, Colors.laso_kasi_walo, Colors.laso_sewi, Colors.laso_sewi_walo, Colors.pimeja_walo_walo, Colors.pimeja_walo, Colors.pimeja_pimeja_walo, Colors.pimeja_pimeja_pimeja_walo, Colors.walo, ]
+            keyboard = []
+            for color in colors_available:
+                keyboard.append([InlineKeyboardButton(colors_dict[color.value], callback_data="{}|{}".format(Selectable.change_background_color.value, color.value))])
+            keyboard.append([InlineKeyboardButton('Go back', callback_data="{}".format(Selectable.go_back.value))])
+
+
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            db = TokiPonaDB()
+            _, _, background_color = db.get_data(query.message.chat_id)
+            background_color = str(background_color)
+            if len(background_color) != 6:
+                background_color = '0'*(6-len(background_color)) + str(background_color)
+
+
+            text = '''Pick a color for the background. Current is {}.'''.format(colors_dict[background_color])
+            bot.edit_message_media(chat_id=query.message.chat_id,
+                                   message_id=query.message.message_id,
+                                   media=InputMediaPhoto(id_photo_kule, caption=text),
+                                   reply_markup=reply_markup,
+                                   )
+        elif data[0] == Selectable.go_back.value:
+            settings(bot, update, True)
+    elif len(data) == 2:
+        db = TokiPonaDB()
+        if data[0] == Selectable.change_font_type.value:
+            db.update_font_type(query.message.chat_id, int(data[1]))
+            success_message = 'Your font type is now {}\n\n'.format(fonts_dict[str(data[1])])
+        elif data[0] == Selectable.change_font_color.value:
+            db.update_font_color(query.message.chat_id, str(data[1]))
+            success_message = 'Your font color is now {}\n\n'.format(colors_dict[str(data[1])])
+        elif data[0] == Selectable.change_background_color.value:
+            db.update_background_color(query.message.chat_id, str(data[1]))
+            success_message = 'Your background color is now {}\n\n'.format(colors_dict[str(data[1])])
+        settings(bot, update, True, extra_text=success_message)
+    else:
+        raise TypeError("Button query got a number of arguments different from 1 or 2: {}".format(data))
+
+
 def help(bot, update):
     with open('help.txt', 'r') as f:
         text = f.read()
 
-    url_photo_help = '''http://lp.plop.me/?m=%0D%0Ani+li+pona+mute+tawa+mi%20%0D%0A%0D%0Atoki-pona+li+pona+tawa+mi%20%0D%0A%0D%0Ama+[_%20kasi+_%20alasa+_%20nasin+_%20awen+_%20telo+_%20a%20]+li+suli%20%0D%0A%0D%0Ajan+pi+sona+ala+li+ken+kama+sona+kepeken+ni%20%20%20%20%20%20%20%20%20%20%20%20%20%0D%0A%0D%0A%0D%0A%0D%0A&s=200&f=1&t=jpg'''
-
-    result = bot.send_photo(update.message.chat_id, photo=url_photo_help, caption=text, parse_mode='Markdown')
-    print(result)
+    result = bot.send_photo(update.message.chat_id, photo=id_photo_help, caption=text, parse_mode='Markdown')
 
 def main():
     # Get the dispatcher to register handlers
@@ -116,8 +241,11 @@ def main():
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
+    dp.add_handler(CommandHandler("settings", settings))
     dp.add_handler(InlineQueryHandler(inlinequery))
     #dp.add_handler(ChosenInlineResultHandler(subtitle))
+
+    updater.dispatcher.add_handler(CallbackQueryHandler(buttons))
 
     # log all errors
     dp.add_error_handler(error)
