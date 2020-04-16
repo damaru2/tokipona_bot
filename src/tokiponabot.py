@@ -29,9 +29,6 @@ updater = Updater(token_id)
 # Extended vocabulary
 vocabulary = ["a", "akesi", "alasa", "anpa", "ante", "awen", "ala", "ali", "ale", "anu", "e", "en", "esun", "insa", "ijo", "ike", "ilo", "jaki", "jelo", "jan", "jo", "kalama", "kulupu", "kiwen", "kala", "kama", "kasi", "ken", "kepeken", "kili", "kule", "kute", "kon", "ko", "linja", "lukin", "lape", "laso", "lawa", "lete", "lili", "lipu", "loje", "luka", "lupa", "len", "lon", "la", "li", "monsi", "mama", "mani", "meli", "mije", "moku", "moli", "musi", "mute", "mun", "ma", "mi", "mu", "nanpa", "nasin", "nasa", "nena", "nimi", "noka", "ni", "oo", "olin", "open", "ona", "pakala", "palisa", "pimeja", "pilin", "pali", "pana", "pini", "pipi", "poka", "poki", "pona", "pan", "pi", "pu", "sitelen", "sijelo", "sinpin", "soweli", "sama", "seli", "selo", "seme", "sewi", "sike", "sina", "sona", "suli", "suno", "supa", "suwi", "sin", "tenpo", "taso", "tawa", "telo", "toki", "tomo", "tan", "tu", "utala", "unpa", "uta", "walo", "waso", "wawa", "weka", "wile", "wan", "zz", "_65535", "spacespace", "commaspace", "periodspace", "colonspace", "exclamspace", "questionspace", "kin", "kinexclam", "kipisi", "leko", "monsuta", "namako", "oko", "pake", "anpalawa", "ijoike", "ijolili", "ijopona", "ijouta", "ilokipisi", "ilolape", "ilomusi", "ilonanpa", "iloopen", "ilosuno", "ilotoki", "ilolukin", "ilomoli", "ilooko", "janala", "janalasa", "janali", "janale", "janike", "jankala", "jankasi", "jankalama", "jankulupu", "janlawa", "janlili", "janmute", "jannasa", "janolin", "janpakala", "janpali", "janpoka", "janpona", "jansama", "janseme", "jansewi", "jansin", "jansona", "jansuli", "jansuwi", "jantoki", "janunpa", "janutala", "janwawa", "janante", "kalalili", "kalalete", "kalamamusi", "kasilili", "kilijelo", "kililaso", "kililili", "kililoje", "kilipalisa", "kilisuwi", "kilipimeja", "kiliwalo", "kokasi", "kokule", "kojaki", "kolete", "kolili", "koseli", "konasa", "kowalo", "kojelo", "kolaso", "koloje", "kopimeja", "konlete", "lenjelo", "lenlaso", "lenloje", "lenjan", "lenlawa", "lenluka", "lennoka", "lenpimeja", "lensin", "lenwalo", "linjalili", "linjapona", "lipukasi", "liputoki", "lipusona", "lipunanpa", "lipusewi", "lukaluka", "lupakiwen", "lupajaki", "lupakute", "lupameli", "lupamonsi", "lupanena", "lupalili", "lupatomo", "mamamama", "mamameli", "mamamije", "meliike", "melipona", "melilili", "melisama", "meliunpa", "mijeike", "mijepona", "mijelili", "mijesama", "mijeunpa", "mijewawa", "musilili", "nenakon", "nenakute", "nenalili", "nenamama", "nenameli", "palisalili", "pilinala", "pilinike", "pilinnasa", "pilinpakala", "pilinpona", "pilinsama", "pokikon", "pokilete", "pokiseli", "pokitelo", "pokilili", "pokilen", "sikelili", "sitelentawa", "sonaala", "sonalili", "sonaike", "sonama", "sonananpa", "sonapona", "sonasijelo", "sonatenpo", "sonatoki", "sonautala", "selolen", "selosoweli", "supalape", "supalawa", "supamoku", "supamonsi", "supapali", "supalupa", "telolete", "telolili", "tokiala", "tokiike", "tokipona", "tokisona", "tokiutala", "tokisin", "tomolape", "tomomani", "tomomoku", "tomonasin", "tomopali", "tomosona", "tomotawa", "tomounpa", "tomoutala", "tutu", "tuwan", "wantu", "ijomonsuta", "janmonsuta", "tomomonsuta", "sitelenmonsuta", "sitelenike", "sitelenpona", "sitelenma", "sitelensitelen", "sitelentoki", "maali", "maale", "makasi", "matomo", "kiwenjelo", "kiwenlaso", "kiwenlili", "kiwenloje", "kiwenmun", "kiwenpimeja", "kiwensuno", "kiwenwalo", "kiwenkasi", "kiwenlete", "kiwenseli", "ikeala", "ikelili", "ikelukin", "ponaala", "ponalili", "ponalukin", "lenlili", "ijoakesi", "ijoala", "ijoalasa", "ijoali", "ijoale", "ijoanpa", "ijoante", "ijoanu", "ijoawen", "ijoen", "ijoesun", "ijoilo", "ijoinsa", "ijojaki", "ijojan", "ijojelo", "ijojo", "ijokala", "ijokalama", "ijokama", "ijokasi", "ijoken", "ijokepeken", "ijokili", "ijokiwen", "ijoko", "ijokon", "ijokule", "ijokulupu", "ijokute", "ijolape", "ijolaso", "ijolawa", "ijolen", "ijolete", "ijolinja", "ijolipu", "ijoloje", "ijolon", "ijoluka", "ijolukin", "ijolupa", "ijoma", "ijomama", "ijomani", "ijomeli", "ijomi", "ijomije", "ijomoku", "ijomoli", "ijomonsi", "ijomu", "ijomun", "ijomusi", "ijomute", "ijonanpa", "ijonasa", "ijonasin", "ijonena", "ijoni", "ijonimi", "ijonoka", "ijoolin", "ijoona", "ijoopen", "ijopakala", "ijopali", "ijopalisa", "ijopan", "ijopana", "ijopilin", "ijopimeja", "ijopini", "ijopipi", "ijopoka", "ijopoki", "ijopu", "ijosama", "ijoseli", "ijoselo", "ijoseme", "ijosewi", "ijosijelo", "ijosike", "ijosin", "ijosina", "ijosinpin", "ijositelen", "ijosona", "ijosoweli", "ijosuli", "ijosuno", "ijosupa", "ijosuwi", "ijotan", "ijotaso", "ijotawa", "ijotelo", "ijotenpo", "ijotoki", "ijotomo", "ijotu", "ijounpa", "ijoutala", "ijowalo", "ijowan", "ijowaso", "ijowawa", "ijoweka", "ijowile", "ijokin", "ijokipisi", "ijoleko", "ijonamako", "ijooko", "ijopake"]
 
-def edit_message_text(text, id_chat, id_message, reply_markup, bot):
-    bot.editMessageText(text=text, chat_id=id_chat, reply_markup=reply_markup, message_id=id_message)
-
 
 def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"' % (update, error))
@@ -76,12 +73,7 @@ def generate_url(query, id_chat, image_format='webp', size=30):
                 i+= len(elem)
     query = ' '.join(nq)
 
-    # oo is o in the website, so we change a single o by oo
-    query = re.sub(r'(^| )o($| )', r'\1oo\2', query)
-    # escape
-    query = re.sub(r' +', r' ', query)
-    query += ' '*(9-i)
-    query = urllib.parse.quote(query)
+
     db = TokiPonaDB()
     try:
         font_type, font_color, background_color = db.get_data(id_chat)
@@ -96,6 +88,16 @@ def generate_url(query, id_chat, image_format='webp', size=30):
     background_color = str(background_color)
     if len(background_color) != 6:
         background_color = '0'*(6-len(background_color)) + str(background_color)
+
+    if int(font_type) == 1:
+        # oo is o in the website, so we change a single o by oo
+        query = re.sub(r'(^| )o($| )', r'\1oo\2', query)
+        query = re.sub(r'(^| )O($| )', r'\1oo\2', query)
+
+    # escape
+    query = re.sub(r' +', r' ', query)
+    query += ' '*(9-i)
+    query = urllib.parse.quote(query)
 
     query += '    &s={}&f={}&c={}&b={}&t={}'.format(size, font_type, font_color, background_color, image_format)
 
@@ -242,6 +244,7 @@ def main():
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
     dp.add_handler(CommandHandler("settings", settings))
+    dp.add_handler(CommandHandler("wilemi", settings))
     dp.add_handler(InlineQueryHandler(inlinequery))
     #dp.add_handler(ChosenInlineResultHandler(subtitle))
 
