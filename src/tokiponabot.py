@@ -72,6 +72,10 @@ def generate_url(query, id_chat, image_format='webp', size=30):
                 nq.append(elem)
                 i+= len(elem)
     query = ' '.join(nq)
+    if i in [1,2]:
+        size = 60
+    elif i in [3, 4]:
+        size = 50
 
 
     db = TokiPonaDB()
@@ -96,6 +100,9 @@ def generate_url(query, id_chat, image_format='webp', size=30):
 
     # escape
     query = re.sub(r' +', r' ', query)
+    print(size)
+    print('"', query, '"')
+    print(len(query))
     query += ' '*(9-i)
     query = urllib.parse.quote(query)
 
@@ -129,6 +136,9 @@ def start(bot, update):
 def settings(bot, update, edit_message_or_not=False, extra_text=''):
     # This is only allowed in private chats
     if not edit_message_or_not and update.message.chat_id != update.message.from_user.id:
+        bot.sendMessage(update.message.chat_id,
+                parse_mode='Markdown',
+                text='o toki tawa mi lon [tomo mi](t.me/tokipona_bot) a! (Talk to me in [my private chat](t.me/tokipona_bot)).')
         return
 
     keyboard = [[InlineKeyboardButton("Font Type", callback_data=str(Selectable.change_font_type.value))],
@@ -137,15 +147,16 @@ def settings(bot, update, edit_message_or_not=False, extra_text=''):
     reply_markup = InlineKeyboardMarkup(keyboard)
     text = '{}Do you want to change the font type or the color of your Toki Pona messages?'.format(extra_text)
 
+    photo_query = 'ni li wile sina a /'
     if edit_message_or_not:
         query = update.callback_query
         bot.edit_message_media(chat_id=query.message.chat_id,
                                message_id=query.message.message_id,
-                               media=InputMediaPhoto(generate_url(query='wile sina /', id_chat=query.message.chat_id, image_format='jpg', size=50), caption=text),
+                               media=InputMediaPhoto(generate_url(query=photo_query, id_chat=query.message.chat_id, image_format='jpg', size=50), caption=text),
                                reply_markup=reply_markup,
                                )
     else:
-        results = bot.send_photo(update.message.chat_id, photo=generate_url(query='wile sina /', id_chat=update.message.chat_id, image_format='jpg', size=50), caption=text, parse_mode='Markdown', reply_markup=reply_markup, timeout=60)
+        results = bot.send_photo(update.message.chat_id, photo=generate_url(query=photo_query, id_chat=update.message.chat_id, image_format='jpg', size=50), caption=text, parse_mode='Markdown', reply_markup=reply_markup, timeout=60)
 
 
 def buttons(bot, update):
@@ -153,7 +164,7 @@ def buttons(bot, update):
     data = query.data.split('|')
     if len(data) == 1:
         if data[0] == Selectable.change_font_type.value:
-            fonts_available = [Fonts.linja_pona_jan_same, Fonts.linja_leko_jan_selano, Fonts.sitelen_luka_tu_tu_jan_inkepa, Fonts.sitelen_pona_jan_wesi, Fonts.linja_pimeja_jan_inkepa, Fonts.sitelen_pi_linja_ko_jan_inkepa,]
+            fonts_available = [Fonts.linja_pona_jan_same, Fonts.linja_leko_jan_selano, Fonts.sitelen_luka_tu_tu_jan_inkepa, Fonts.sitelen_pona_jan_wesi, Fonts.linja_pimeja_jan_inkepa, Fonts.sitelen_pi_linja_ko_jan_inkepa,Fonts.sitelen_pona_pona_jan_jaku]
             keyboard = []
             for font in fonts_available:
                 keyboard.append([InlineKeyboardButton(fonts_dict[font.value], callback_data="{}|{}".format(Selectable.change_font_type.value, font.value))])
@@ -231,6 +242,12 @@ def buttons(bot, update):
 
 
 def help(bot, update):
+    # This is only allowed in private chats
+    if update.message.chat_id != update.message.from_user.id:
+        bot.sendMessage(update.message.chat_id,
+                parse_mode='Markdown',
+                text='o toki tawa mi lon [tomo mi](t.me/tokipona_bot) a! (Talk to me in [my private chat](t.me/tokipona_bot)).')
+        return
     with open('help.txt', 'r') as f:
         text = f.read()
 
