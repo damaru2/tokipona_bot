@@ -100,9 +100,6 @@ def generate_url(query, id_chat, image_format='webp', size=30):
 
     # escape
     query = re.sub(r' +', r' ', query)
-    print(size)
-    print('"', query, '"')
-    print(len(query))
     query += ' '*(9-i)
     query = urllib.parse.quote(query)
 
