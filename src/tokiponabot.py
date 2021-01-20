@@ -8,7 +8,7 @@ import logging
 import urllib.parse
 import re
 
-from private.private_conf import *
+from private.private_conf import token_id, magic_chat_id, id_photo_nasin_sitelen, id_photo_kule, id_photo_help
 
 from database import TokiPonaDB
 from enums import Colors, Selectable, Fonts, fonts_dict, colors_dict
