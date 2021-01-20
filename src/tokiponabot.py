@@ -127,7 +127,7 @@ def inlinequery(bot, update):
 
 
 def start(bot, update):
-    bot.sendMessage(update.message.chat_id, text='toki! sina wile kama sona e ilo ni la o luka e ni: /help. sina ken sitelen kepeken linja pona kepeken ilo ni! sitelen ni li pini, sina sitelen e "/".\n\nHi! I you want to learn all you can do with the bot, click here: /help. You can use linja pona with this bot. Use it online and append "/" to your sentence. You can add enters for the generated images.')
+    bot.sendMessage(update.message.chat_id, text='toki! sina wile kama sona e ilo ni la o luka e ni: /help. sina ken sitelen kepeken linja pona kepeken ilo ni! sitelen ni li pini, sina sitelen e "/".\n\nHi! I you want to learn all you can do with the bot, click here: /help. You can use linja pona with this bot. Use it online and append "/" to your sentence. You can add line breaks.')
 
 
 def settings(bot, update, edit_message_or_not=False, extra_text=''):
@@ -138,11 +138,11 @@ def settings(bot, update, edit_message_or_not=False, extra_text=''):
                 text='o toki tawa mi lon [tomo mi](t.me/tokipona_bot) a! (Talk to me in [my private chat](t.me/tokipona_bot)).')
         return
 
-    keyboard = [[InlineKeyboardButton("Font Type", callback_data=str(Selectable.change_font_type.value))],
-                [InlineKeyboardButton("Font Color", callback_data=str(Selectable.change_font_color.value))],
-                [InlineKeyboardButton("Background Color", callback_data=str(Selectable.change_background_color.value))]]
+    keyboard = [[InlineKeyboardButton("nasin sitelen - Font Type", callback_data=str(Selectable.change_font_type.value))],
+                [InlineKeyboardButton("kule sitelen - Font Color", callback_data=str(Selectable.change_font_color.value))],
+                [InlineKeyboardButton("kule lipu - Background Color", callback_data=str(Selectable.change_background_color.value))]]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    text = '{}Do you want to change the font type or the color of your Toki Pona messages?'.format(extra_text)
+    text = '{}sina wile ala wile ante e nasin sitelen e kule sitelen tawa sitelen sina pi toki pona?\n\nDo you want to change the font type or the color of your Toki Pona messages?'.format(extra_text)
 
     photo_query = 'ni li wile sina a /'
     if edit_message_or_not:
@@ -161,7 +161,7 @@ def buttons(bot, update):
     data = query.data.split('|')
     if len(data) == 1:
         if data[0] == Selectable.change_font_type.value:
-            fonts_available = [Fonts.linja_pona_jan_same, Fonts.linja_leko_jan_selano, Fonts.sitelen_luka_tu_tu_jan_inkepa, Fonts.sitelen_pona_jan_wesi, Fonts.linja_pimeja_jan_inkepa, Fonts.sitelen_pi_linja_ko_jan_inkepa,Fonts.sitelen_pona_pona_jan_jaku]
+            fonts_available = [Fonts.linja_pona_jan_same, Fonts.linja_leko_jan_selano, Fonts.sitelen_luka_tu_tu_jan_inkepa, Fonts.sitelen_pona_jan_wesi, Fonts.linja_pimeja_jan_inkepa, Fonts.sitelen_pi_linja_ko_jan_inkepa,Fonts.sitelen_pona_pona_jan_jaku, Fonts.insa_pi_supa_lape_int_main]
             keyboard = []
             for font in fonts_available:
                 keyboard.append([InlineKeyboardButton(fonts_dict[font.value], callback_data="{}|{}".format(Selectable.change_font_type.value, font.value))])
@@ -172,7 +172,7 @@ def buttons(bot, update):
             font_type, _, _ = db.get_data(query.message.chat_id)
             font_type = str(font_type)
 
-            text = '''Pick a font. Current is {}.'''.format(fonts_dict[font_type])
+            text = '''o luka e nasin. tenpo ni la sina kepeken {}\n\nPick a font. Current is {}.'''.format(fonts_dict[font_type], fonts_dict[font_type])
             bot.edit_message_media(chat_id=query.message.chat_id,
                                    message_id=query.message.message_id,
                                    media=InputMediaPhoto(id_photo_nasin_sitelen, caption=text),
@@ -192,7 +192,7 @@ def buttons(bot, update):
             if len(font_color) != 6:
                 font_color = '0'*(6-len(font_color)) + str(font_color)
 
-            text = '''Pick a color for the font. Current is {}.'''.format(colors_dict[font_color])
+            text = '''o luka e kule sitelen. tenpo ni la sina kepeken {}\n\nPick a color for the font. Current is {}.'''.format(colors_dict[font_color], colors_dict[font_color])
             bot.edit_message_media(chat_id=query.message.chat_id,
                                    message_id=query.message.message_id,
                                    media=InputMediaPhoto(id_photo_kule, caption=text),
@@ -214,7 +214,7 @@ def buttons(bot, update):
                 background_color = '0'*(6-len(background_color)) + str(background_color)
 
 
-            text = '''Pick a color for the background. Current is {}.'''.format(colors_dict[background_color])
+            text = '''o luka e kule lipu. tenpo ni la sina kepeken {}\n\nPick a color for the background. Current is {}.'''.format(colors_dict[background_color], colors_dict[background_color])
             bot.edit_message_media(chat_id=query.message.chat_id,
                                    message_id=query.message.message_id,
                                    media=InputMediaPhoto(id_photo_kule, caption=text),
@@ -226,29 +226,43 @@ def buttons(bot, update):
         db = TokiPonaDB()
         if data[0] == Selectable.change_font_type.value:
             db.update_font_type(query.message.chat_id, int(data[1]))
-            success_message = 'Your font type is now {}\n\n'.format(fonts_dict[str(data[1])])
+            success_message = 'tenpo ni la sina kepeken nasin sitelen pi {}\n\nYour font type is now {}\n\n'.format(fonts_dict[str(data[1])], fonts_dict[str(data[1])])
         elif data[0] == Selectable.change_font_color.value:
             db.update_font_color(query.message.chat_id, str(data[1]))
-            success_message = 'Your font color is now {}\n\n'.format(colors_dict[str(data[1])])
+            success_message = 'tenpo ni la sina kepeken kule sitelen pi {}\n\nYour font color is now {}\n\n'.format(colors_dict[str(data[1])], colors_dict[str(data[1])])
         elif data[0] == Selectable.change_background_color.value:
             db.update_background_color(query.message.chat_id, str(data[1]))
-            success_message = 'Your background color is now {}\n\n'.format(colors_dict[str(data[1])])
+            success_message = 'tenpo ni la sina kepeken kule lipu pi {}\n\nYour background color is now {}\n\n'.format(colors_dict[str(data[1])], colors_dict[str(data[1])])
         settings(bot, update, True, extra_text=success_message)
     else:
         raise TypeError("Button query got a number of arguments different from 1 or 2: {}".format(data))
 
 
-def help(bot, update):
+def help_english(bot, update):
+    help(bot, update, 'en')
+
+
+def help_toki_pona(bot, update):
+    help(bot, update, 'tp')
+
+
+def help(bot, update, language):
     # This is only allowed in private chats
     if update.message.chat_id != update.message.from_user.id:
         bot.sendMessage(update.message.chat_id,
                 parse_mode='Markdown',
                 text='o toki tawa mi lon [tomo mi](t.me/tokipona_bot) a! (Talk to me in [my private chat](t.me/tokipona_bot)).')
         return
-    with open('help.txt', 'r') as f:
+    if language == 'en':
+        help_filename = 'help.txt'
+    else:
+        help_filename = 'sona.txt'
+
+    with open(help_filename , 'r') as f:
         text = f.read()
 
     result = bot.send_photo(update.message.chat_id, photo=id_photo_help, caption=text, parse_mode='Markdown')
+
 
 def main():
     # Get the dispatcher to register handlers
@@ -256,7 +270,8 @@ def main():
 
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("help", help))
+    dp.add_handler(CommandHandler("sona", help_toki_pona))
+    dp.add_handler(CommandHandler("help", help_english))
     dp.add_handler(CommandHandler("settings", settings))
     dp.add_handler(CommandHandler("wilemi", settings))
     dp.add_handler(InlineQueryHandler(inlinequery))

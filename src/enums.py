@@ -32,6 +32,7 @@ class Fonts(Enum):
     linja_pimeja_jan_inkepa="10"
     sitelen_pi_linja_ko_jan_inkepa="13"
     sitelen_pona_pona_jan_jaku="14"
+    insa_pi_supa_lape_int_main="15"
 
     # These are not sitelen pona fonts
     linja_kute_mute_jan_inkepa="5"
@@ -49,6 +50,7 @@ fonts_dict = {
     Fonts.linja_pimeja_jan_inkepa.value:              "Linja Pimeja - jan Inkepa",
     Fonts.sitelen_pi_linja_ko_jan_inkepa.value:       "Linja Ko - jan Inkepa",
     Fonts.sitelen_pona_pona_jan_jaku.value:           "Sitelen Pona Pona - jan Jaku",
+    Fonts.insa_pi_supa_lape_int_main.value:           "Insa Pi Supa Lape - jan int main();",
 }
 
 colors_dict = {

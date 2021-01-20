@@ -1,8 +1,10 @@
-You can use [linja pona](https://github.com/davidar/linja-pona/) with this bot (font of [sitelen pona](http://tokipona.net/tp/janpije/hieroglyphs.php)). To use this bot, write its name in a chat, then some words and finish the sentence with a slash (i.e. /  ). Example:
+sina sona ala e toki Inli la o kepeken e ni: /sona
+
+You can write in [sitelen pona](http://tokipona.net/tp/janpije/hieroglyphs.php) with the [linja pona](https://github.com/davidar/linja-pona/) font or other fonts. To use this bot, write its name in a chat, then some words and finish the sentence with a slash (i.e. /  ). Example:
 
 `@tokipona_bot ni li pona mute tawa mi /`
 
-After writing the slash an image will appear in a moment and then you can click it to send it.
+After writing the slash an image will appear in a moment and then you can click/tap it to send it.
 
 You can write compound words (noun + adjective) by concatenating the words. Not all combinations are available. Example:
 
@@ -12,4 +14,4 @@ You can draw a rectangle for names by surrounding several words by \[ ] and addi
 
 `@tokipona_bot ma [_kasi_alasa_nasin_awen_telo_a] li suli / `
 
-You can change the font and colors using /wilemi. Note that only the default font (Linja Pona - jan Same) is complete. Others may not let you write some words (like kin), or may not let you write with the latin alphabet. You can only write compound words with the default font.
+You can change the font and colors using /wilemi. Note that only the default font (Linja Pona - jan Same) is complete. Others may not let you write some words (like kin), or may not let you write Latin characters in the images. You can only write compound words with the default font.
