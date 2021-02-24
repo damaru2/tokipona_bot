@@ -165,7 +165,7 @@ def buttons(bot, update):
             keyboard = []
             for font in fonts_available:
                 keyboard.append([InlineKeyboardButton(fonts_dict[font.value], callback_data="{}|{}".format(Selectable.change_font_type.value, font.value))])
-            keyboard.append([InlineKeyboardButton('Go back', callback_data="{}".format(Selectable.go_back.value))])
+            keyboard.append([InlineKeyboardButton('o tawa monsi - Go back', callback_data="{}".format(Selectable.go_back.value))])
 
             reply_markup = InlineKeyboardMarkup(keyboard)
             db = TokiPonaDB()
@@ -179,11 +179,11 @@ def buttons(bot, update):
                                    reply_markup=reply_markup,
                                    )
         elif data[0] == Selectable.change_font_color.value:
-            colors_available = [Colors.pimeja, Colors.loje, Colors.jelo, Colors.loje_walo, Colors.laso_kasi, Colors.laso_kasi_walo, Colors.laso_sewi, Colors.laso_sewi_walo, Colors.pimeja_walo_walo, Colors.pimeja_walo, Colors.pimeja_pimeja_walo, Colors.pimeja_pimeja_pimeja_walo, Colors.walo, ]
+            colors_available = [Colors.pimeja, Colors.jelo, Colors.loje, Colors.loje_walo, Colors.laso_kasi, Colors.laso_kasi_walo, Colors.laso_sewi, Colors.laso_sewi_walo, Colors.pimeja_walo_walo, Colors.pimeja_walo, Colors.pimeja_pimeja_walo, Colors.pimeja_pimeja_pimeja_walo, Colors.walo, ]
             keyboard = []
             for color in colors_available:
                 keyboard.append([InlineKeyboardButton(colors_dict[color.value], callback_data="{}|{}".format(Selectable.change_font_color.value, color.value))])
-            keyboard.append([InlineKeyboardButton('Go back', callback_data="{}".format(Selectable.go_back.value))])
+            keyboard.append([InlineKeyboardButton('o tawa monsi - Go back', callback_data="{}".format(Selectable.go_back.value))])
 
             reply_markup = InlineKeyboardMarkup(keyboard)
             db = TokiPonaDB()
@@ -199,11 +199,11 @@ def buttons(bot, update):
                                    reply_markup=reply_markup,
                                    )
         elif data[0] == Selectable.change_background_color.value:
-            colors_available = [Colors.pimeja, Colors.loje, Colors.jelo, Colors.loje_walo, Colors.laso_kasi, Colors.laso_kasi_walo, Colors.laso_sewi, Colors.laso_sewi_walo, Colors.pimeja_walo_walo, Colors.pimeja_walo, Colors.pimeja_pimeja_walo, Colors.pimeja_pimeja_pimeja_walo, Colors.walo, ]
+            colors_available = [Colors.pimeja, Colors.jelo, Colors.loje, Colors.loje_walo, Colors.laso_kasi, Colors.laso_kasi_walo, Colors.laso_sewi, Colors.laso_sewi_walo, Colors.pimeja_walo_walo, Colors.pimeja_walo, Colors.pimeja_pimeja_walo, Colors.pimeja_pimeja_pimeja_walo, Colors.walo, ]
             keyboard = []
             for color in colors_available:
                 keyboard.append([InlineKeyboardButton(colors_dict[color.value], callback_data="{}|{}".format(Selectable.change_background_color.value, color.value))])
-            keyboard.append([InlineKeyboardButton('Go back', callback_data="{}".format(Selectable.go_back.value))])
+            keyboard.append([InlineKeyboardButton('o tawa monsi - Go back', callback_data="{}".format(Selectable.go_back.value))])
 
 
             reply_markup = InlineKeyboardMarkup(keyboard)
