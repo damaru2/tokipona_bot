@@ -34,14 +34,44 @@ def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"' % (update, error))
 
 
+def prepend_underscores_in_names(query):
+    split_q = query.split(sep=' ')
+    result = []
+    name_enabled = False
+    for elem in split_q:
+        aux = re.search(r'\[[^\]]*$', elem)
+        if aux:
+            name_enabled = True
+        else:
+            aux = re.search(r'\].*$', elem)
+            if aux:
+                name_enabled = False
+            elif name_enabled and elem in vocabulary:
+                result.append('_')
+        result.append(elem)
+
+    return ' '.join(result)
+
 
 def generate_url(query, id_chat, image_format='webp', size=30):
+    db = TokiPonaDB()
+    try:
+        font_type, font_color, background_color = db.get_data(id_chat)
+    except TypeError: # User non existent
+        db.insert_new_user(id_chat)
+        font_type, font_color, background_color = db.get_data(id_chat)
+
     #query = re.sub(r'/(\d*).*', r'/\1', query)
     query, arg = query.split('/', 1)
 
     query = re.sub(r'_+', r'_', query)
     query = re.sub(r'([a-zA-Z])([^a-zA-Z ])', r'\1 \2', query)
     query = re.sub(r'([^a-zA-Z ])([a-zA-Z])', r'\1 \2', query)
+
+    if int(font_type) == 1:
+        query = re.sub(r'_', r'', query)
+        query = prepend_underscores_in_names(query)
+
 
     # Heuristic to split lines, each line consists of 10 toki pona symbols or characters of words that are not in the vocabulary.
     # This does not work well words outside of toki pona that have more that 10 characters
@@ -78,12 +108,6 @@ def generate_url(query, id_chat, image_format='webp', size=30):
         size = 50
 
 
-    db = TokiPonaDB()
-    try:
-        font_type, font_color, background_color = db.get_data(id_chat)
-    except TypeError: # User non existent
-        db.insert_new_user(id_chat)
-        font_type, font_color, background_color = db.get_data(id_chat)
 
     font_color = str(font_color)
     if len(font_color) != 6:
