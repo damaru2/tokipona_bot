@@ -10,8 +10,8 @@ You can write compound words (noun + adjective) by concatenating the words. Not 
 
 `@tokipona_bot tokipona li pona tawa mi /`
 
-You can draw a rectangle for names by surrounding several words by \[ ] and adding a \_ before each word. Example:
+In some fonts, you can draw a rectangle for names by surrounding several words using \[ ].
 
-`@tokipona_bot ma [_kasi_alasa_nasin_awen_telo_a] li suli / `
+`@tokipona_bot ma [kasi alasa nasin awen telo a] li suli / `
 
 You can change the font and colors using /wilemi. Note that only the default font (Linja Pona - jan Same) is complete. Others may not let you write some words (like kin), or may not let you write Latin characters in the images. You can only write compound words with the default font.  [Code on Github](https://github.com/damaru2/tokipona_bot/)

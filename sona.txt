@@ -10,8 +10,8 @@ sina ken sitelen e nimi tu lon sitelen wan. o sitelen poka e ona a. sina ken ala
 
 `@tokipona_bot tokipona li pona tawa mi /`
 
-sina ken sitelen e poki tawa nimi jan tawa nimi ijo tawa nimi suli ante. o kepeken sitelen \[ ] en sitelen \_ lon poka nimi. sama ni:
+sina ken sitelen e poki tawa nimi jan tawa nimi ijo tawa nimi suli ante. o kepeken sitelen \[ ]. sama ni:
 
-`@tokipona_bot ma [_kasi_alasa_nasin_awen_telo_a] li suli / `
+`@tokipona_bot ma [kasi alasa nasin awen telo a] li suli / `
 
 sina ken ante e kule kepeken nasin /wilemi. o sona e ni a: nasin sitelen pi Linja Pona li ken ali. taso nasin ante li ken ala. nasin mute li ken ala sitelen e nimi pi pu ala li ken ala sitelen e sitelen Lasina lon sitelen li ken ala sitelen e nimi tu.

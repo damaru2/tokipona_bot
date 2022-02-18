@@ -42,6 +42,12 @@ class Fonts(Enum):
     toki_tengwar_jan_pije="9"
 
 
+    linja_pi_tomo_lipu="12"
+    linja_sike="17"
+    linja_suwi="18"
+    linja_pi_pu_lukin="19"
+
+
 fonts_dict = {
     Fonts.linja_pona_jan_same.value:                  "Linja Pona - jan Same",
     Fonts.linja_leko_jan_selano.value:                "Linja Leko - jan Selano",
@@ -51,6 +57,10 @@ fonts_dict = {
     Fonts.sitelen_pi_linja_ko_jan_inkepa.value:       "Linja Ko - jan Inkepa",
     Fonts.sitelen_pona_pona_jan_jaku.value:           "Sitelen Pona Pona - jan Jaku",
     Fonts.insa_pi_supa_lape_int_main.value:           "Insa Pi Supa Lape - jan int main();",
+    Fonts.linja_pi_tomo_lipu.value:                   "Linja Pi Tomo Lipu",
+    Fonts.linja_sike.value:                           "Linja Sike - jan Lipamanka",
+    Fonts.linja_suwi.value:                           "Linja Suwi - jan Anna",
+    Fonts.linja_pi_pu_lukin.value:                    "Linja Pi Pu Lukin - jan Sa",
 }
 
 colors_dict = {
