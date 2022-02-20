@@ -13,7 +13,7 @@ from private.private_conf import token_id, magic_chat_id, fonts, id_photo_nasin_
 
 from image_utils import ImageText
 from database import TokiPonaDB
-from enums import Colors, Selectable, Fonts, fonts_dict, colors_dict
+from enums import Colors, Selectable, Fonts, fonts_dict, colors_dict, pu, ku_suli, ku_lili
 
 
 # Enable logging
@@ -40,6 +40,26 @@ def insert_underscores_in_name(matchobj):
     return "[_{}]".format("_".join(words))
 
 
+def uppercase_wide_words(query, font_size, image_text):
+    def uppercase_if_wide(matchobj):
+        word = matchobj.group(1)
+        width = image_text.get_text_size(word)[0]
+        if width > font_size * 1.5:
+            return word.upper()
+        return word
+    return re.sub(r'\b([^\W_]+)\b', uppercase_if_wide, query)
+
+
+def replace_compound_words(matchobj):
+    word = matchobj.group(1)
+    for w in pu:
+        if word in pu + ku_suli + ku_lili: # prevent splitting up mani into ma-ni or similar issues
+            return word
+        if word.startswith(w):
+            if word[len(w):] in pu:
+                return "{}-{}".format(word[:len(w)], word[len(w):])
+
+
 def hex_to_rgb(hex):
   return tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))
 
@@ -53,8 +73,15 @@ def fix_font_quirks(query, font_type):
     if font_type in [1, 15, 12, 17]: # fonts that support cartouches with underscores
         query = re.sub(r'\[(.+)\]', insert_underscores_in_name, query)
 
+    if font_type in [1, 17]: # fonts that support compound glyphs
+        query = re.sub(r'\b([a-z]+)\b', replace_compound_words, query)
+
     if font_type == 4: # sitelen pona doesn't have a ligature for "ale", only "ali" *shrug*
-        query = re.sub(r'([^a-zA-Z])ale([^a-zA-Z])', r'\1ali\2', query)
+        query = re.sub(r'(\b)ale(\b)', r'\1ali\2', query)
+        # it also doesn't properly substitute a, e and o. very annoying.
+        query = re.sub(r'(\b)a(\b)', '\\1\uE600\\2', query)
+        query = re.sub(r'(\b)e(\b)', '\\1\uE609\\2', query)
+        query = re.sub(r'(\b)o(\b)', '\\1\uE644\\2', query)
 
     return query
 
@@ -84,7 +111,10 @@ def generate_pic(query, id_chat, image_format='webp', size=80):
 
     font_file = fonts.get(str(font_type), fonts['default'])
     img_width = 512
+
     img = ImageText(img_width, size, font_file, foreground=fg, background=bg, mode="RGB",padding = 20, padding_bottom=60)
+    query = uppercase_wide_words(query, size, img)
+
     filename = "{}/{}.{}".format(render_directory, id_chat, image_format)
     img.render(query, filename)
     return filename

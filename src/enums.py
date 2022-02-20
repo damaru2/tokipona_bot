@@ -78,3 +78,12 @@ colors_dict = {
     Colors.pimeja_pimeja_pimeja_walo.value: "pimeja pimeja pimeja walo",
     Colors.walo.value: "walo",
 }
+
+
+pu = ["a", "akesi", "alasa", "anpa", "ante", "awen", "ala", "ali", "ale", "anu", "e", "en", "esun", "insa", "ijo", "ike", "ilo", "jaki", "jelo", "jan", "jo", "kalama", "kulupu", "kiwen", "kala", "kama", "kasi", "ken", "kepeken", "kili", "kule", "kute", "kon", "ko", "linja", "lukin", "lape", "laso", "lawa", "lete", "lili", "lipu", "loje", "luka", "lupa", "len", "lon", "la", "li", "monsi", "mama", "mani", "meli", "mije", "moku", "moli", "musi", "mute", "mun", "ma", "mi", "mu", "nanpa", "nasin", "nasa", "nena", "nimi", "noka", "ni", "oo", "olin", "open", "ona", "pakala", "palisa", "pimeja", "pilin", "pali", "pana", "pini", "pipi", "poka", "poki", "pona", "pan", "pi", "pu", "sitelen", "sijelo", "sinpin", "soweli", "sama", "seli", "selo", "seme", "sewi", "sike", "sina", "sona", "suli", "suno", "supa", "suwi", "sin", "tenpo", "taso", "tawa", "telo", "toki", "tomo", "tan", "tu", "utala", "unpa", "uta", "walo", "waso", "wawa", "weka", "wile", "wan"]
+
+
+ku_suli = ["epiku", "jasima", "kijetesantakalu", "kin", "kipisi", "kokosila", "ku", "lanpan", "leko", "meso", "misikeke", "monsuta", "n", "namako", "oko", "soko", "tonsi"]
+
+
+ku_lili = ["apeja", "ete", "ewe", "isipin", "kalamawala", "kan", "kapesi", "ke", "kese", "kiki", "kulijo", "kuntu", "likujo", "linluwi", "loka", "majuna", "misa", "mulapisu", "neja", "oke", "pake", "pata", "peto", "Pingo", "po", "polinpin", "pomotolo", "powe", "samu", "san", "soto", "sutopatikuna", "taki", "te", "teje", "to", "tuli", "umesu", "unu", "usawi", "waleja", "yupekosi"]
