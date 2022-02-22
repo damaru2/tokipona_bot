@@ -7,6 +7,7 @@
 # License: GPL <http://www.gnu.org/copyleft/gpl.html>
 
 from PIL import Image, ImageDraw, ImageFont
+import io
 
 font_cache = {}
 
@@ -30,10 +31,16 @@ class ImageText(object):
             self.font = ImageFont.truetype(font_file, size)
             font_cache[font_id] = self.font
 
-    def save(self, filename=None):
-        self.image.save(filename or self.filename)
+    def save(self, img, filename_or_format=None, binary=False):
+        if binary:
+            output = io.BytesIO()
+            img.save(output, format=filename_or_format)
+            return output.getvalue()
+        else:
+            img.save(filename_or_format or self.filename)
+            return filename_or_format
 
-    def render(self, text, filename):
+    def render(self, text, filename_or_format, binary=False):
         lines = self.wrap_text(text)
         wrapped = '\n'.join(lines)
         
@@ -45,7 +52,7 @@ class ImageText(object):
         draw = ImageDraw.Draw(img)
 
         draw.multiline_text((self.padding_left, self.padding_top), wrapped, font=self.font, fill=self.foreground)
-        img.save(filename)
+        return self.save(img, filename_or_format, binary)
 
     def get_text_size(self, text):
         return self.font.getsize(text)

@@ -5,8 +5,6 @@ id_photo_help = "ID_OF_HELP_PHOTO"
 id_photo_nasin_sitelen = "ID_OF_FONT_PHOTO"
 id_photo_kule = "ID_OF_COLOR_PHOTO"
 
-render_directory = "/tmp" # Directory in which to store the temporary files created when rendering text
-
 fonts = {
     "default": "/path/to/your/linja-pona-4.9.otf",
     "1": "/path/to/your/linja-pona-4.9.otf",

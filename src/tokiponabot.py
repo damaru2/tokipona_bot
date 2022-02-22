@@ -9,7 +9,7 @@ import urllib.parse
 import re
 import os
 
-from private.private_conf import token_id, magic_chat_id, fonts, id_photo_nasin_sitelen, id_photo_kule, id_photo_help, render_directory
+from private.private_conf import token_id, magic_chat_id, fonts, id_photo_nasin_sitelen, id_photo_kule, id_photo_help
 
 from image_utils import ImageText
 from database import TokiPonaDB
@@ -86,7 +86,7 @@ def fix_font_quirks(query, font_type):
     return query
 
 
-def generate_pic(query, id_chat, image_format='webp', size=80):
+def generate_pic(query, id_chat, image_format='WebP', size=80):
     db = TokiPonaDB()
     try:
         font_type, font_color, background_color = db.get_data(id_chat)
@@ -115,9 +115,7 @@ def generate_pic(query, id_chat, image_format='webp', size=80):
     img = ImageText(img_width, size, font_file, foreground=fg, background=bg, mode="RGB",padding = 20, padding_bottom=60)
     query = uppercase_wide_words(query, size, img)
 
-    filename = "{}/{}.{}".format(render_directory, id_chat, image_format)
-    img.render(query, filename)
-    return filename
+    return img.render(query, image_format, True)
 
 
 def inlinequery(update, context):
@@ -127,8 +125,8 @@ def inlinequery(update, context):
         return
 
     id_chat = update.effective_user.id
-    filename = generate_pic(query, id_chat)
-    message = context.bot.sendSticker(magic_chat_id, open(filename, 'rb'), timeout=60, disable_notification=True)
+    img = generate_pic(query, id_chat)
+    message = context.bot.sendSticker(magic_chat_id, img, timeout=60, disable_notification=True)
 
     results = [InlineQueryResultCachedSticker(
         id=uuid4(),
@@ -136,7 +134,6 @@ def inlinequery(update, context):
     )]
 
     context.bot.answerInlineQuery(update.inline_query.id, results=results)
-    os.remove(filename)
     context.bot.delete_message(chat_id=magic_chat_id, message_id=message.message_id)
 
 
@@ -161,16 +158,15 @@ def settings(update, context, edit_message_or_not=False, extra_text=''):
     photo_query = 'ni li wile sina a /'
     if edit_message_or_not:
         query = update.callback_query
-        filename = generate_pic(query=photo_query, id_chat=query.message.chat_id, image_format='jpg', size=50)
+        img = generate_pic(query=photo_query, id_chat=query.message.chat_id, image_format='JPEG', size=50)
         context.bot.edit_message_media(chat_id=query.message.chat_id,
                                message_id=query.message.message_id,
-                               media=InputMediaPhoto(open(filename, 'rb'), caption=text),
+                               media=InputMediaPhoto(img, caption=text),
                                reply_markup=reply_markup,
                                )
     else:
-        filename = generate_pic(query=photo_query, id_chat=update.message.chat_id, image_format='jpg', size=50)
-        results = context.bot.send_photo(update.message.chat_id, photo=open(filename, 'rb'), caption=text, parse_mode='Markdown', reply_markup=reply_markup, timeout=60)
-    os.remove(filename)
+        img = generate_pic(query=photo_query, id_chat=update.message.chat_id, image_format='JPEG', size=50)
+        results = context.bot.send_photo(update.message.chat_id, photo=img, caption=text, parse_mode='Markdown', reply_markup=reply_markup, timeout=60)
 
 
 def buttons(update, context):

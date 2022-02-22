@@ -86,4 +86,5 @@ pu = ["a", "akesi", "alasa", "anpa", "ante", "awen", "ala", "ali", "ale", "anu",
 ku_suli = ["epiku", "jasima", "kijetesantakalu", "kin", "kipisi", "kokosila", "ku", "lanpan", "leko", "meso", "misikeke", "monsuta", "n", "namako", "oko", "soko", "tonsi"]
 
 
-ku_lili = ["apeja", "ete", "ewe", "isipin", "kalamawala", "kan", "kapesi", "ke", "kese", "kiki", "kulijo", "kuntu", "likujo", "linluwi", "loka", "majuna", "misa", "mulapisu", "neja", "oke", "pake", "pata", "peto", "Pingo", "po", "polinpin", "pomotolo", "powe", "samu", "san", "soto", "sutopatikuna", "taki", "te", "teje", "to", "tuli", "umesu", "unu", "usawi", "waleja", "yupekosi"]
+ku_lili = ["apeja", "ete", "ewe", "isipin", "kalamARR", "kalamawala", "kan", "kapesi", "ke", "kese", "kiki", "kulijo", "kuntu", "likujo", "linluwi", "loka", "majuna", "misa", "mulapisu", "neja", "oke", "pake", "pata", "peto", "Pingo", "po", "polinpin", "pomotolo", "powe", "samu", "san", "soto", "sutopatikuna", "taki", "te", "teje", "to", "tuli", "umesu", "unu", "usawi", "waleja", "yupekosi"]
+
