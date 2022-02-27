@@ -6,6 +6,7 @@ from telegram import InlineQueryResultCachedPhoto, InlineQueryResultCachedSticke
 from uuid import uuid4
 import logging
 import urllib.parse
+import random
 import re
 import os
 
@@ -60,6 +61,22 @@ def replace_compound_words(matchobj):
                 return "{}-{}".format(word[:len(w)], word[len(w):])
 
 
+def cartouchify_single_words(query):
+    def cartouchify_word(matchobj):
+        word = matchobj.group(1)
+        if word not in pu + ku_suli:
+            new_compound = []
+            word = word.lower()
+            for letter in word:
+                new_compound.append(random.choice([p for p in pu if p[0] == letter]))
+            return "[{}]".format(" ".join(new_compound))
+
+        return "[{}]".format(word)
+
+    query = re.sub(r'\[([mnptkswljaeiou]+)\]', cartouchify_word, query, flags=re.IGNORECASE)
+    return query
+
+
 def hex_to_rgb(hex):
   return tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))
 
@@ -86,7 +103,7 @@ def fix_font_quirks(query, font_type):
     return query
 
 
-def generate_pic(query, id_chat, image_format='WebP', size=80):
+def generate_pic(query, id_chat, image_format='WebP', size=60):
     db = TokiPonaDB()
     try:
         font_type, font_color, background_color = db.get_data(id_chat)
@@ -104,6 +121,7 @@ def generate_pic(query, id_chat, image_format='WebP', size=80):
 
     query, arg = query.split('/', 1)
     
+    query = cartouchify_single_words(query)
     query = fix_font_quirks(query, font_type)
 
     fg = hex_to_rgb(font_color) + (255,)
