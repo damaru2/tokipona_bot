@@ -30,9 +30,9 @@ fi
 ;;
 status)
 if [ ! -z "$TP_PID" ]; then
-echo "tokinponabot is in the house with pid= $TP_PID"
+echo "tokiponabot is in the house with pid= $TP_PID"
 else
-echo "tokinponabot is not in the house"
+echo "tokiponabot is not in the house"
 fi
 ;;
 *)

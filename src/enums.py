@@ -3,8 +3,8 @@ from enum import Enum
 
 class Colors(Enum):
     pimeja="000000"
-    loje="FF0000"
     jelo="FFFF00"
+    loje="FF0000"
     loje_walo="FFCCCC"
     laso_kasi="00FF00"
     laso_kasi_walo="CCFFCC"
@@ -58,13 +58,13 @@ fonts_dict = {
     Fonts.insa_pi_supa_lape_int_main.value:           "Insa Pi Supa Lape - jan int main();",
     Fonts.linja_sike_jan_lipamanka.value:             "Linja Sike - jan Lipamanka",
     Fonts.linja_suwi_anna.value:                      "Linja Suwi - Anna",
-    Fonts.linja_pi_pu_lukin_jan_sa.value:             "linja pi pu lukin - jan Sa",
+    Fonts.linja_pi_pu_lukin_jan_sa.value:             "Linja pi pu lukin - jan Sa",
 }
 
 colors_dict = {
     Colors.pimeja.value: "pimeja",
-    Colors.loje.value: "loje",
     Colors.jelo.value: "jelo",
+    Colors.loje.value: "loje",
     Colors.loje_walo.value: "loje walo",
     Colors.laso_kasi.value: "laso kasi",
     Colors.laso_kasi_walo.value: "laso kasi walo",
