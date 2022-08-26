@@ -1,0 +1,21 @@
+token_id = "YOUR_TELEGRAM_BOT_TOKEN_HERE"
+magic_chat_id = chat_id_number
+
+id_photo_help = "ID_OF_HELP_PHOTO"
+id_photo_nasin_sitelen = "ID_OF_FONT_PHOTO"
+id_photo_kule = "ID_OF_COLOR_PHOTO"
+
+fonts = {
+    "default": "/path/to/your/linja-pona-4.9.otf",
+    "1": "/path/to/your/linja-pona-4.9.otf",
+    "2": "/path/to/your/linja_leko.ttf",
+    "3": "/path/to/your/sitelen_luka_tu_tu.otf",
+    "4": "/path/to/your/sitelen-pona.otf",
+    "10": "/path/to/your/linjapimeja1.4.ttf",
+    "12": "/path/to/your/linjapitomolipu.0.7.ttf",
+    "14": "/path/to/your/sitelen-pona-pona.otf",
+    "15": "/path/to/your/standard/supalape.otf",
+    "17": "/path/to/your/linja-sike-5.otf",
+    "18": "/path/to/your/linjasuwi.otf",
+    "19": "/path/to/your/PuLukin.otf",
+}
