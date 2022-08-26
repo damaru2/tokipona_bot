@@ -29,6 +29,7 @@ log_errors = './log/errors.log'
 # Create the EventHandler and pass it your bot's token.
 updater = Updater(token_id)
 
+
 def error(update, context):
     # import traceback
     # traceback.print_exception(context.error)
@@ -113,11 +114,11 @@ def generate_pic(query, id_chat, image_format='WebP', size=60):
 
     font_color = str(font_color)
     if len(font_color) != 6:
-        font_color = '0'*(6-len(font_color)) + str(font_color)
+        font_color = '0'*(6 - len(font_color)) + str(font_color)
 
     background_color = str(background_color)
     if len(background_color) != 6:
-        background_color = '0'*(6-len(background_color)) + str(background_color)
+        background_color = '0'*(6 - len(background_color)) + str(background_color)
 
     query, arg = query.split('/', 1)
     
@@ -152,6 +153,7 @@ def inlinequery(update, context):
     )]
 
     context.bot.answerInlineQuery(update.inline_query.id, results=results)
+
     context.bot.delete_message(chat_id=magic_chat_id, message_id=message.message_id)
 
 
@@ -187,35 +189,37 @@ def settings(update, context, edit_message_or_not=False, extra_text=''):
         results = context.bot.send_photo(update.message.chat_id, photo=img, caption=text, parse_mode='Markdown', reply_markup=reply_markup, timeout=60)
 
 
+
 def buttons(update, context):
     query = update.callback_query
     data = query.data.split('|')
     if len(data) == 1:
         if data[0] == Selectable.change_font_type.value:
-            fonts_available = Fonts
-            fonts_available = [Fonts.linja_pona_jan_same, Fonts.linja_leko_jan_selano, Fonts.sitelen_luka_tu_tu_jan_inkepa, Fonts.sitelen_pona_jan_wesi, Fonts.linja_pimeja_jan_inkepa, Fonts.sitelen_pi_linja_ko_jan_inkepa,Fonts.sitelen_pona_pona_jan_jaku, Fonts.insa_pi_supa_lape_int_main, Fonts.linja_pi_tomo_lipu, Fonts.linja_sike, Fonts.linja_suwi, Fonts.linja_pi_pu_lukin]
+
+            fonts_available = [Fonts.linja_pona_jan_same, Fonts.linja_leko_jan_selano, Fonts.sitelen_luka_tu_tu_jan_inkepa, Fonts.sitelen_pona_jan_wesi, Fonts.linja_pimeja_jan_inkepa, Fonts.linja_pi_tomo_lipu, Fonts.sitelen_pi_linja_ko_jan_inkepa, Fonts.sitelen_pona_pona_jan_jaku, Fonts.insa_pi_supa_lape_int_main, Fonts.linja_sike_jan_lipamanka, Fonts.linja_suwi_anna, Fonts.linja_pi_pu_lukin_jan_sa]
             keyboard = []
             for font in fonts_available:
                 keyboard.append([InlineKeyboardButton(fonts_dict[font.value], callback_data="{}|{}".format(Selectable.change_font_type.value, font.value))])
-            keyboard.append([InlineKeyboardButton('Go back', callback_data="{}".format(Selectable.go_back.value))])
+            keyboard.append([InlineKeyboardButton('o tawa monsi - Go back', callback_data="{}".format(Selectable.go_back.value))])
 
             reply_markup = InlineKeyboardMarkup(keyboard)
             db = TokiPonaDB()
             font_type, _, _ = db.get_data(query.message.chat_id)
             font_type = str(font_type)
-
+            
             text = '''o luka e nasin. tenpo ni la sina kepeken {}\n\nPick a font. Current is {}.'''.format(fonts_dict.get(font_type, "sona ala"), fonts_dict.get(font_type, "unknown"))
+
             context.bot.edit_message_media(chat_id=query.message.chat_id,
                                    message_id=query.message.message_id,
                                    media=InputMediaPhoto(id_photo_nasin_sitelen, caption=text),
                                    reply_markup=reply_markup,
                                    )
         elif data[0] == Selectable.change_font_color.value:
-            colors_available = [Colors.pimeja, Colors.loje, Colors.jelo, Colors.loje_walo, Colors.laso_kasi, Colors.laso_kasi_walo, Colors.laso_sewi, Colors.laso_sewi_walo, Colors.pimeja_walo_walo, Colors.pimeja_walo, Colors.pimeja_pimeja_walo, Colors.pimeja_pimeja_pimeja_walo, Colors.walo, ]
+            colors_available = [Colors.pimeja, Colors.jelo, Colors.loje, Colors.loje_walo, Colors.laso_kasi, Colors.laso_kasi_walo, Colors.laso_sewi, Colors.laso_sewi_walo, Colors.pimeja_walo_walo, Colors.pimeja_walo, Colors.pimeja_pimeja_walo, Colors.pimeja_pimeja_pimeja_walo, Colors.walo, ]
             keyboard = []
             for color in colors_available:
                 keyboard.append([InlineKeyboardButton(colors_dict[color.value], callback_data="{}|{}".format(Selectable.change_font_color.value, color.value))])
-            keyboard.append([InlineKeyboardButton('Go back', callback_data="{}".format(Selectable.go_back.value))])
+            keyboard.append([InlineKeyboardButton('o tawa monsi - Go back', callback_data="{}".format(Selectable.go_back.value))])
 
             reply_markup = InlineKeyboardMarkup(keyboard)
             db = TokiPonaDB()
@@ -231,11 +235,11 @@ def buttons(update, context):
                                    reply_markup=reply_markup,
                                    )
         elif data[0] == Selectable.change_background_color.value:
-            colors_available = [Colors.pimeja, Colors.loje, Colors.jelo, Colors.loje_walo, Colors.laso_kasi, Colors.laso_kasi_walo, Colors.laso_sewi, Colors.laso_sewi_walo, Colors.pimeja_walo_walo, Colors.pimeja_walo, Colors.pimeja_pimeja_walo, Colors.pimeja_pimeja_pimeja_walo, Colors.walo, ]
+            colors_available = [Colors.pimeja, Colors.jelo, Colors.loje, Colors.loje_walo, Colors.laso_kasi, Colors.laso_kasi_walo, Colors.laso_sewi, Colors.laso_sewi_walo, Colors.pimeja_walo_walo, Colors.pimeja_walo, Colors.pimeja_pimeja_walo, Colors.pimeja_pimeja_pimeja_walo, Colors.walo, ]
             keyboard = []
             for color in colors_available:
                 keyboard.append([InlineKeyboardButton(colors_dict[color.value], callback_data="{}|{}".format(Selectable.change_background_color.value, color.value))])
-            keyboard.append([InlineKeyboardButton('Go back', callback_data="{}".format(Selectable.go_back.value))])
+            keyboard.append([InlineKeyboardButton('o tawa monsi - Go back', callback_data="{}".format(Selectable.go_back.value))])
 
 
             reply_markup = InlineKeyboardMarkup(keyboard)
