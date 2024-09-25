@@ -4,7 +4,7 @@
 
 toki a! sina ken sitelen kepeken linja pona kepeken ilo ni a! sitelen ni li pini, o sitelen e sitelen "/".
 
-Hi! I you want to learn all you can do with the bot, click here: /help. You can use linja pona with this bot. Use it online and append "/" to your sentence. You can add enters for the generated images.
+Hi! If you want to learn all you can do with the bot, go send /help or /sona to the bot. You can use linja pona with this bot. Use it online and append "/" to your sentence. You can add enters for the generated images.
 
 ---
 
