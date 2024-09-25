@@ -7,6 +7,8 @@ from uuid import uuid4
 import logging
 import urllib.parse
 import re
+import bisect
+import random
 
 from private.private_conf import token_id, magic_chat_id, id_photo_nasin_sitelen, id_photo_kule, id_photo_help
 
@@ -27,12 +29,77 @@ log_errors = './log/errors.log'
 updater = Updater(token_id)
 
 # Extended vocabulary
+core_vocabulary = ["a", "akesi", "alasa", "anpa", "ante", "awen", "ala", "ali", "ale", "anu", "e", "en", "esun", "insa", "ijo", "ike", "ilo", "jaki", "jelo", "jan", "jo", "kalama", "kulupu", "kiwen", "kala", "kama", "kasi", "ken", "kepeken", "kili", "kule", "kute", "kon", "ko", "linja", "lukin", "lape", "laso", "lawa", "lete", "lili", "lipu", "loje", "luka", "lupa", "len", "lon", "la", "li", "monsi", "mama", "mani", "meli", "mije", "moku", "moli", "musi", "mute", "mun", "ma", "mi", "mu", "nanpa", "nasin", "nasa", "nena", "nimi", "noka", "ni", "o", "oo", "olin", "open", "ona", "pakala", "palisa", "pimeja", "pilin", "pali", "pana", "pini", "pipi", "poka", "poki", "pona", "pan", "pi", "pu", "sitelen", "sijelo", "sinpin", "soweli", "sama", "seli", "selo", "seme", "sewi", "sike", "sina", "sona", "suli", "suno", "supa", "suwi", "sin", "tenpo", "taso", "tawa", "telo", "toki", "tomo", "tan", "tu", "utala", "unpa", "uta", "walo", "waso", "wawa", "weka", "wile", "wan"]
 vocabulary = ["a", "akesi", "alasa", "anpa", "ante", "awen", "ala", "ali", "ale", "anu", "e", "en", "esun", "insa", "ijo", "ike", "ilo", "jaki", "jelo", "jan", "jo", "kalama", "kulupu", "kiwen", "kala", "kama", "kasi", "ken", "kepeken", "kili", "kule", "kute", "kon", "ko", "linja", "lukin", "lape", "laso", "lawa", "lete", "lili", "lipu", "loje", "luka", "lupa", "len", "lon", "la", "li", "monsi", "mama", "mani", "meli", "mije", "moku", "moli", "musi", "mute", "mun", "ma", "mi", "mu", "nanpa", "nasin", "nasa", "nena", "nimi", "noka", "ni", "o", "oo", "olin", "open", "ona", "pakala", "palisa", "pimeja", "pilin", "pali", "pana", "pini", "pipi", "poka", "poki", "pona", "pan", "pi", "pu", "sitelen", "sijelo", "sinpin", "soweli", "sama", "seli", "selo", "seme", "sewi", "sike", "sina", "sona", "suli", "suno", "supa", "suwi", "sin", "tenpo", "taso", "tawa", "telo", "toki", "tomo", "tan", "tu", "utala", "unpa", "uta", "walo", "waso", "wawa", "weka", "wile", "wan", "zz", "_65535", "spacespace", "commaspace", "periodspace", "colonspace", "exclamspace", "questionspace", "kin", "kinexclam", "kipisi", "leko", "monsuta", "namako", "oko", "pake", "anpalawa", "ijoike", "ijolili", "ijopona", "ijouta", "ilokipisi", "ilolape", "ilomusi", "ilonanpa", "iloopen", "ilosuno", "ilotoki", "ilolukin", "ilomoli", "ilooko", "janala", "janalasa", "janali", "janale", "janike", "jankala", "jankasi", "jankalama", "jankulupu", "janlawa", "janlili", "janmute", "jannasa", "janolin", "janpakala", "janpali", "janpoka", "janpona", "jansama", "janseme", "jansewi", "jansin", "jansona", "jansuli", "jansuwi", "jantoki", "janunpa", "janutala", "janwawa", "janante", "kalalili", "kalalete", "kalamamusi", "kasilili", "kilijelo", "kililaso", "kililili", "kililoje", "kilipalisa", "kilisuwi", "kilipimeja", "kiliwalo", "kokasi", "kokule", "kojaki", "kolete", "kolili", "koseli", "konasa", "kowalo", "kojelo", "kolaso", "koloje", "kopimeja", "konlete", "lenjelo", "lenlaso", "lenloje", "lenjan", "lenlawa", "lenluka", "lennoka", "lenpimeja", "lensin", "lenwalo", "linjalili", "linjapona", "lipukasi", "liputoki", "lipusona", "lipunanpa", "lipusewi", "lukaluka", "lupakiwen", "lupajaki", "lupakute", "lupameli", "lupamonsi", "lupanena", "lupalili", "lupatomo", "mamamama", "mamameli", "mamamije", "meliike", "melipona", "melilili", "melisama", "meliunpa", "mijeike", "mijepona", "mijelili", "mijesama", "mijeunpa", "mijewawa", "musilili", "nenakon", "nenakute", "nenalili", "nenamama", "nenameli", "palisalili", "pilinala", "pilinike", "pilinnasa", "pilinpakala", "pilinpona", "pilinsama", "pokikon", "pokilete", "pokiseli", "pokitelo", "pokilili", "pokilen", "sikelili", "sitelentawa", "sonaala", "sonalili", "sonaike", "sonama", "sonananpa", "sonapona", "sonasijelo", "sonatenpo", "sonatoki", "sonautala", "selolen", "selosoweli", "supalape", "supalawa", "supamoku", "supamonsi", "supapali", "supalupa", "telolete", "telolili", "tokiala", "tokiike", "tokipona", "tokisona", "tokiutala", "tokisin", "tomolape", "tomomani", "tomomoku", "tomonasin", "tomopali", "tomosona", "tomotawa", "tomounpa", "tomoutala", "tutu", "tuwan", "wantu", "ijomonsuta", "janmonsuta", "tomomonsuta", "sitelenmonsuta", "sitelenike", "sitelenpona", "sitelenma", "sitelensitelen", "sitelentoki", "maali", "maale", "makasi", "matomo", "kiwenjelo", "kiwenlaso", "kiwenlili", "kiwenloje", "kiwenmun", "kiwenpimeja", "kiwensuno", "kiwenwalo", "kiwenkasi", "kiwenlete", "kiwenseli", "ikeala", "ikelili", "ikelukin", "ponaala", "ponalili", "ponalukin", "lenlili", "ijoakesi", "ijoala", "ijoalasa", "ijoali", "ijoale", "ijoanpa", "ijoante", "ijoanu", "ijoawen", "ijoen", "ijoesun", "ijoilo", "ijoinsa", "ijojaki", "ijojan", "ijojelo", "ijojo", "ijokala", "ijokalama", "ijokama", "ijokasi", "ijoken", "ijokepeken", "ijokili", "ijokiwen", "ijoko", "ijokon", "ijokule", "ijokulupu", "ijokute", "ijolape", "ijolaso", "ijolawa", "ijolen", "ijolete", "ijolinja", "ijolipu", "ijoloje", "ijolon", "ijoluka", "ijolukin", "ijolupa", "ijoma", "ijomama", "ijomani", "ijomeli", "ijomi", "ijomije", "ijomoku", "ijomoli", "ijomonsi", "ijomu", "ijomun", "ijomusi", "ijomute", "ijonanpa", "ijonasa", "ijonasin", "ijonena", "ijoni", "ijonimi", "ijonoka", "ijoolin", "ijoona", "ijoopen", "ijopakala", "ijopali", "ijopalisa", "ijopan", "ijopana", "ijopilin", "ijopimeja", "ijopini", "ijopipi", "ijopoka", "ijopoki", "ijopu", "ijosama", "ijoseli", "ijoselo", "ijoseme", "ijosewi", "ijosijelo", "ijosike", "ijosin", "ijosina", "ijosinpin", "ijositelen", "ijosona", "ijosoweli", "ijosuli", "ijosuno", "ijosupa", "ijosuwi", "ijotan", "ijotaso", "ijotawa", "ijotelo", "ijotenpo", "ijotoki", "ijotomo", "ijotu", "ijounpa", "ijoutala", "ijowalo", "ijowan", "ijowaso", "ijowawa", "ijoweka", "ijowile", "ijokin", "ijokipisi", "ijoleko", "ijonamako", "ijooko", "ijopake"]
+tp_letters = ['a', 'e', 'i', 'o', 'u', 'j', 'w', 'k', 'l', 'm', 'n', 'p', 's',  't' ]
+forbidden_syllables = ['wu', 'wo', 'ji', 'ti']
+tp_vowels = ['a', 'e', 'i', 'o', 'u']
 linja_sike_extra_vocabulary = [] # TODO
 
 
 def error(update, context):
     logger.warning('Update "%s" caused error "%s"' % (update, context.error))
+
+def get_random_word_starting_with(letter):
+    # Convert the letter to lowercase for case-insensitive comparison
+    letter = letter.lower()
+
+    # Find the insertion point for the letter and the next
+    # letter
+    start_index = bisect.bisect_left(core_vocabulary, letter)
+    next_letter = chr(ord(letter) + 1)  # Get the next letter
+    end_index = bisect.bisect_left(core_vocabulary, next_letter)
+
+    # Get the list of words that start with
+    # the specified letter
+    filtered_words = core_vocabulary[start_index:end_index]
+
+    # Check if there are any words
+    # that match
+    if filtered_words:
+        return random.choice(filtered_words)
+
+
+def append_random_symbols_if_capitalized_valid(result, elem):
+    if elem[0].islower():
+        return False
+    elem = elem.lower()
+    if not all(char in tp_letters for char in elem):
+        return False
+    if any(fs in elem for fs in forbidden_syllables):
+        return False
+    # Check syllable structure
+    state = 'start'
+    for c in elem:
+        if state=='start':
+            if c in tp_vowels:
+                state = 'vowel'
+            else:
+                state = 'consonant'
+        elif state== 'consonant':
+            if c not in tp_vowels:
+                return False
+            state = 'vowel'
+        elif state == 'vowel':
+            if c in tp_vowels:
+                return False
+            if c == 'n':
+                state = 'maybe_coda_n'
+            else:
+                state = 'consonant'
+        else: # maybe_coda_n
+            if c == 'n':
+                return False
+            if c in tp_vowels:
+                state = 'vowel'
+            else:
+                state = 'consonant'
+
+    for c in elem:
+        result.append('_')
+        result.append(get_random_word_starting_with(c))
+
+    return True # valid
 
 
 def prepend_underscores_in_names(query):
@@ -43,14 +110,22 @@ def prepend_underscores_in_names(query):
         aux = re.search(r'\[[^\]]*$', elem)
         if aux:
             name_enabled = True
+            result.append(elem)
         else:
             aux = re.search(r'\].*$', elem)
             if aux:
                 name_enabled = False
-            elif name_enabled and elem.lower() in vocabulary:
-                result.append('_')
-        result.append(elem)
-
+                result.append(elem)
+            elif name_enabled:
+                valid = append_random_symbols_if_capitalized_valid(result, elem)
+                if not valid:
+                    if elem in vocabulary:
+                        result.append('_')
+                        result.append(elem)
+                    else:
+                        result.append(elem)
+            else:
+                result.append(elem)
     return ' '.join(result)
 
 
