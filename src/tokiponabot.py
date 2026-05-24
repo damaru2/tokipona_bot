@@ -1,8 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from telegram.ext import Updater, CommandHandler, InlineQueryHandler, ChosenInlineResultHandler, CallbackQueryHandler
-from telegram import InlineQueryResultCachedPhoto, InlineQueryResultCachedSticker, InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto
+from pathlib import Path
+from telegram import InlineQueryResultCachedSticker, InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto, Update
+from telegram.constants import ParseMode
+from telegram.ext import ApplicationBuilder, CallbackQueryHandler, CommandHandler, ContextTypes, InlineQueryHandler
 from uuid import uuid4
 import logging
 import urllib.parse
@@ -23,11 +25,6 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-log_errors = './log/errors.log'
-
-# Create the EventHandler and pass it your bot's token.
-updater = Updater(token_id)
-
 # Extended vocabulary
 core_vocabulary = ["a", "akesi", "alasa", "anpa", "ante", "awen", "ala", "ali", "ale", "anu", "e", "en", "esun", "insa", "ijo", "ike", "ilo", "jaki", "jelo", "jan", "jo", "kalama", "kulupu", "kiwen", "kala", "kama", "kasi", "ken", "kepeken", "kili", "kule", "kute", "kon", "ko", "linja", "lukin", "lape", "laso", "lawa", "lete", "lili", "lipu", "loje", "luka", "lupa", "len", "lon", "la", "li", "monsi", "mama", "mani", "meli", "mije", "moku", "moli", "musi", "mute", "mun", "ma", "mi", "mu", "nanpa", "nasin", "nasa", "nena", "nimi", "noka", "ni", "o", "oo", "olin", "open", "ona", "pakala", "palisa", "pimeja", "pilin", "pali", "pana", "pini", "pipi", "poka", "poki", "pona", "pan", "pi", "pu", "sitelen", "sijelo", "sinpin", "soweli", "sama", "seli", "selo", "seme", "sewi", "sike", "sina", "sona", "suli", "suno", "supa", "suwi", "sin", "tenpo", "taso", "tawa", "telo", "toki", "tomo", "tan", "tu", "utala", "unpa", "uta", "walo", "waso", "wawa", "weka", "wile", "wan"]
 vocabulary = ["a", "akesi", "alasa", "anpa", "ante", "awen", "ala", "ali", "ale", "anu", "e", "en", "esun", "insa", "ijo", "ike", "ilo", "jaki", "jelo", "jan", "jo", "kalama", "kulupu", "kiwen", "kala", "kama", "kasi", "ken", "kepeken", "kili", "kule", "kute", "kon", "ko", "linja", "lukin", "lape", "laso", "lawa", "lete", "lili", "lipu", "loje", "luka", "lupa", "len", "lon", "la", "li", "monsi", "mama", "mani", "meli", "mije", "moku", "moli", "musi", "mute", "mun", "ma", "mi", "mu", "nanpa", "nasin", "nasa", "nena", "nimi", "noka", "ni", "o", "oo", "olin", "open", "ona", "pakala", "palisa", "pimeja", "pilin", "pali", "pana", "pini", "pipi", "poka", "poki", "pona", "pan", "pi", "pu", "sitelen", "sijelo", "sinpin", "soweli", "sama", "seli", "selo", "seme", "sewi", "sike", "sina", "sona", "suli", "suno", "supa", "suwi", "sin", "tenpo", "taso", "tawa", "telo", "toki", "tomo", "tan", "tu", "utala", "unpa", "uta", "walo", "waso", "wawa", "weka", "wile", "wan", "zz", "_65535", "spacespace", "commaspace", "periodspace", "colonspace", "exclamspace", "questionspace", "kin", "kinexclam", "kipisi", "leko", "monsuta", "namako", "oko", "pake", "anpalawa", "ijoike", "ijolili", "ijopona", "ijouta", "ilokipisi", "ilolape", "ilomusi", "ilonanpa", "iloopen", "ilosuno", "ilotoki", "ilolukin", "ilomoli", "ilooko", "janala", "janalasa", "janali", "janale", "janike", "jankala", "jankasi", "jankalama", "jankulupu", "janlawa", "janlili", "janmute", "jannasa", "janolin", "janpakala", "janpali", "janpoka", "janpona", "jansama", "janseme", "jansewi", "jansin", "jansona", "jansuli", "jansuwi", "jantoki", "janunpa", "janutala", "janwawa", "janante", "kalalili", "kalalete", "kalamamusi", "kasilili", "kilijelo", "kililaso", "kililili", "kililoje", "kilipalisa", "kilisuwi", "kilipimeja", "kiliwalo", "kokasi", "kokule", "kojaki", "kolete", "kolili", "koseli", "konasa", "kowalo", "kojelo", "kolaso", "koloje", "kopimeja", "konlete", "lenjelo", "lenlaso", "lenloje", "lenjan", "lenlawa", "lenluka", "lennoka", "lenpimeja", "lensin", "lenwalo", "linjalili", "linjapona", "lipukasi", "liputoki", "lipusona", "lipunanpa", "lipusewi", "lukaluka", "lupakiwen", "lupajaki", "lupakute", "lupameli", "lupamonsi", "lupanena", "lupalili", "lupatomo", "mamamama", "mamameli", "mamamije", "meliike", "melipona", "melilili", "melisama", "meliunpa", "mijeike", "mijepona", "mijelili", "mijesama", "mijeunpa", "mijewawa", "musilili", "nenakon", "nenakute", "nenalili", "nenamama", "nenameli", "palisalili", "pilinala", "pilinike", "pilinnasa", "pilinpakala", "pilinpona", "pilinsama", "pokikon", "pokilete", "pokiseli", "pokitelo", "pokilili", "pokilen", "sikelili", "sitelentawa", "sonaala", "sonalili", "sonaike", "sonama", "sonananpa", "sonapona", "sonasijelo", "sonatenpo", "sonatoki", "sonautala", "selolen", "selosoweli", "supalape", "supalawa", "supamoku", "supamonsi", "supapali", "supalupa", "telolete", "telolili", "tokiala", "tokiike", "tokipona", "tokisona", "tokiutala", "tokisin", "tomolape", "tomomani", "tomomoku", "tomonasin", "tomopali", "tomosona", "tomotawa", "tomounpa", "tomoutala", "tutu", "tuwan", "wantu", "ijomonsuta", "janmonsuta", "tomomonsuta", "sitelenmonsuta", "sitelenike", "sitelenpona", "sitelenma", "sitelensitelen", "sitelentoki", "maali", "maale", "makasi", "matomo", "kiwenjelo", "kiwenlaso", "kiwenlili", "kiwenloje", "kiwenmun", "kiwenpimeja", "kiwensuno", "kiwenwalo", "kiwenkasi", "kiwenlete", "kiwenseli", "ikeala", "ikelili", "ikelukin", "ponaala", "ponalili", "ponalukin", "lenlili", "ijoakesi", "ijoala", "ijoalasa", "ijoali", "ijoale", "ijoanpa", "ijoante", "ijoanu", "ijoawen", "ijoen", "ijoesun", "ijoilo", "ijoinsa", "ijojaki", "ijojan", "ijojelo", "ijojo", "ijokala", "ijokalama", "ijokama", "ijokasi", "ijoken", "ijokepeken", "ijokili", "ijokiwen", "ijoko", "ijokon", "ijokule", "ijokulupu", "ijokute", "ijolape", "ijolaso", "ijolawa", "ijolen", "ijolete", "ijolinja", "ijolipu", "ijoloje", "ijolon", "ijoluka", "ijolukin", "ijolupa", "ijoma", "ijomama", "ijomani", "ijomeli", "ijomi", "ijomije", "ijomoku", "ijomoli", "ijomonsi", "ijomu", "ijomun", "ijomusi", "ijomute", "ijonanpa", "ijonasa", "ijonasin", "ijonena", "ijoni", "ijonimi", "ijonoka", "ijoolin", "ijoona", "ijoopen", "ijopakala", "ijopali", "ijopalisa", "ijopan", "ijopana", "ijopilin", "ijopimeja", "ijopini", "ijopipi", "ijopoka", "ijopoki", "ijopu", "ijosama", "ijoseli", "ijoselo", "ijoseme", "ijosewi", "ijosijelo", "ijosike", "ijosin", "ijosina", "ijosinpin", "ijositelen", "ijosona", "ijosoweli", "ijosuli", "ijosuno", "ijosupa", "ijosuwi", "ijotan", "ijotaso", "ijotawa", "ijotelo", "ijotenpo", "ijotoki", "ijotomo", "ijotu", "ijounpa", "ijoutala", "ijowalo", "ijowan", "ijowaso", "ijowawa", "ijoweka", "ijowile", "ijokin", "ijokipisi", "ijoleko", "ijonamako", "ijooko", "ijopake"]
@@ -37,8 +34,12 @@ tp_vowels = ['a', 'e', 'i', 'o', 'u']
 linja_sike_extra_vocabulary = [] # TODO
 
 
-def error(update, context):
-    logger.warning('Update "%s" caused error "%s"' % (update, context.error))
+def get_chat_id_from_callback(query):
+    return query.message.chat.id
+
+
+async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE):
+    logger.error('Update "%s" caused error "%s"', update, context.error, exc_info=context.error)
 
 def get_random_word_starting_with(letter):
     # Convert the letter to lowercase for case-insensitive comparison
@@ -208,33 +209,33 @@ def generate_url(query, id_chat, image_format='webp', size=30):
     return "http://lp.plop.me/?m={}".format(query)
 
 
-def inlinequery(update, context):
+async def inlinequery(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle the inline query."""
     query = update.inline_query.query
     if '/' not in query:
         return
 
     id_chat = update.effective_user.id
-    message = context.bot.sendSticker(magic_chat_id, generate_url(query, id_chat), timeout=60)
+    message = await context.bot.send_sticker(magic_chat_id, generate_url(query, id_chat), timeout=60)
     results = [InlineQueryResultCachedSticker(
-        id=uuid4(),
+        id=str(uuid4()),
         sticker_file_id=message.sticker.file_id,
     )]
 
-    context.bot.answerInlineQuery(update.inline_query.id, results=results)
+    await context.bot.answer_inline_query(update.inline_query.id, results=results)
 
-    context.bot.delete_message(chat_id=magic_chat_id, message_id=message.message_id)
-
-
-def start(update, context):
-    context.bot.sendMessage(update.message.chat_id, text='toki! sina wile kama sona e ilo ni la o luka e ni: /help. sina ken sitelen kepeken linja pona kepeken ilo ni! sitelen ni li pini, sina sitelen e "/".\n\nHi! I you want to learn all you can do with the bot, click here: /help. You can use linja pona with this bot. Use it online and append "/" to your sentence. You can add line breaks.')
+    await context.bot.delete_message(chat_id=magic_chat_id, message_id=message.message_id)
 
 
-def settings(update, context, edit_message_or_not=False, extra_text=''):
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_message(update.effective_chat.id, text='toki! sina wile kama sona e ilo ni la o luka e ni: /help. sina ken sitelen kepeken linja pona kepeken ilo ni! sitelen ni li pini, sina sitelen e "/".\n\nHi! I you want to learn all you can do with the bot, click here: /help. You can use linja pona with this bot. Use it online and append "/" to your sentence. You can add line breaks.')
+
+
+async def settings(update: Update, context: ContextTypes.DEFAULT_TYPE, edit_message_or_not=False, extra_text=''):
     # This is only allowed in private chats
-    if not edit_message_or_not and update.message.chat_id != update.message.from_user.id:
-        context.bot.sendMessage(update.message.chat_id,
-                parse_mode='Markdown',
+    if not edit_message_or_not and update.effective_chat.id != update.effective_user.id:
+        await context.bot.send_message(update.effective_chat.id,
+                parse_mode=ParseMode.MARKDOWN,
                 text='o toki tawa mi lon [tomo mi](t.me/tokipona_bot) a! (Talk to me in [my private chat](t.me/tokipona_bot)).')
         return
 
@@ -247,17 +248,20 @@ def settings(update, context, edit_message_or_not=False, extra_text=''):
     photo_query = 'ni li wile sina a /'
     if edit_message_or_not:
         query = update.callback_query
-        context.bot.edit_message_media(chat_id=query.message.chat_id,
+        chat_id = get_chat_id_from_callback(query)
+        await context.bot.edit_message_media(chat_id=chat_id,
                                message_id=query.message.message_id,
-                               media=InputMediaPhoto(generate_url(query=photo_query, id_chat=query.message.chat_id, image_format='jpg', size=50), caption=text),
+                               media=InputMediaPhoto(generate_url(query=photo_query, id_chat=chat_id, image_format='jpg', size=50), caption=text),
                                reply_markup=reply_markup,
                                )
     else:
-        results = context.bot.send_photo(update.message.chat_id, photo=generate_url(query=photo_query, id_chat=update.message.chat_id, image_format='jpg', size=50), caption=text, parse_mode='Markdown', reply_markup=reply_markup, timeout=60)
+        await context.bot.send_photo(update.effective_chat.id, photo=generate_url(query=photo_query, id_chat=update.effective_chat.id, image_format='jpg', size=50), caption=text, parse_mode=ParseMode.MARKDOWN, reply_markup=reply_markup, timeout=60)
 
 
-def buttons(update, context):
+async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
+    await query.answer()
+    chat_id = get_chat_id_from_callback(query)
     data = query.data.split('|')
     if len(data) == 1:
         if data[0] == Selectable.change_font_type.value:
@@ -269,11 +273,11 @@ def buttons(update, context):
 
             reply_markup = InlineKeyboardMarkup(keyboard)
             db = TokiPonaDB()
-            font_type, _, _ = db.get_data(query.message.chat_id)
+            font_type, _, _ = db.get_data(chat_id)
             font_type = str(font_type)
 
             text = '''o luka e nasin. tenpo ni la sina kepeken {}\n\nPick a font. Current is {}.'''.format(fonts_dict[font_type], fonts_dict[font_type])
-            context.bot.edit_message_media(chat_id=query.message.chat_id,
+            await context.bot.edit_message_media(chat_id=chat_id,
                                    message_id=query.message.message_id,
                                    media=InputMediaPhoto(id_photo_nasin_sitelen, caption=text),
                                    reply_markup=reply_markup,
@@ -287,13 +291,13 @@ def buttons(update, context):
 
             reply_markup = InlineKeyboardMarkup(keyboard)
             db = TokiPonaDB()
-            _, font_color, _ = db.get_data(query.message.chat_id)
+            _, font_color, _ = db.get_data(chat_id)
             font_color = str(font_color)
             if len(font_color) != 6:
                 font_color = '0'*(6-len(font_color)) + str(font_color)
 
             text = '''o luka e kule sitelen. tenpo ni la sina kepeken {}\n\nPick a color for the font. Current is {}.'''.format(colors_dict[font_color], colors_dict[font_color])
-            context.bot.edit_message_media(chat_id=query.message.chat_id,
+            await context.bot.edit_message_media(chat_id=chat_id,
                                    message_id=query.message.message_id,
                                    media=InputMediaPhoto(id_photo_kule, caption=text),
                                    reply_markup=reply_markup,
@@ -308,49 +312,49 @@ def buttons(update, context):
 
             reply_markup = InlineKeyboardMarkup(keyboard)
             db = TokiPonaDB()
-            _, _, background_color = db.get_data(query.message.chat_id)
+            _, _, background_color = db.get_data(chat_id)
             background_color = str(background_color)
             if len(background_color) != 6:
                 background_color = '0'*(6-len(background_color)) + str(background_color)
 
 
             text = '''o luka e kule lipu. tenpo ni la sina kepeken {}\n\nPick a color for the background. Current is {}.'''.format(colors_dict[background_color], colors_dict[background_color])
-            context.bot.edit_message_media(chat_id=query.message.chat_id,
+            await context.bot.edit_message_media(chat_id=chat_id,
                                    message_id=query.message.message_id,
                                    media=InputMediaPhoto(id_photo_kule, caption=text),
                                    reply_markup=reply_markup,
                                    )
         elif data[0] == Selectable.go_back.value:
-            settings(update, context, True)
+            await settings(update, context, True)
     elif len(data) == 2:
         db = TokiPonaDB()
         if data[0] == Selectable.change_font_type.value:
-            db.update_font_type(query.message.chat_id, int(data[1]))
+            db.update_font_type(chat_id, int(data[1]))
             success_message = 'tenpo ni la sina kepeken nasin sitelen pi {}\n\nYour font type is now {}\n\n'.format(fonts_dict[str(data[1])], fonts_dict[str(data[1])])
         elif data[0] == Selectable.change_font_color.value:
-            db.update_font_color(query.message.chat_id, str(data[1]))
+            db.update_font_color(chat_id, str(data[1]))
             success_message = 'tenpo ni la sina kepeken kule sitelen pi {}\n\nYour font color is now {}\n\n'.format(colors_dict[str(data[1])], colors_dict[str(data[1])])
         elif data[0] == Selectable.change_background_color.value:
-            db.update_background_color(query.message.chat_id, str(data[1]))
+            db.update_background_color(chat_id, str(data[1]))
             success_message = 'tenpo ni la sina kepeken kule lipu pi {}\n\nYour background color is now {}\n\n'.format(colors_dict[str(data[1])], colors_dict[str(data[1])])
-        settings(update, context, True, extra_text=success_message)
+        await settings(update, context, True, extra_text=success_message)
     else:
         raise TypeError("Button query got a number of arguments different from 1 or 2: {}".format(data))
 
 
-def help_english(update, context):
-    help(update, context, 'en')
+async def help_english(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await help(update, context, 'en')
 
 
-def help_toki_pona(update, context):
-    help(update, context, 'tp')
+async def help_toki_pona(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await help(update, context, 'tp')
 
 
-def help(update, context, language):
+async def help(update: Update, context: ContextTypes.DEFAULT_TYPE, language):
     # This is only allowed in private chats
-    if update.message.chat_id != update.message.from_user.id:
-        context.bot.sendMessage(update.message.chat_id,
-                parse_mode='Markdown',
+    if update.effective_chat.id != update.effective_user.id:
+        await context.bot.send_message(update.effective_chat.id,
+                parse_mode=ParseMode.MARKDOWN,
                 text='o toki tawa mi lon [tomo mi](t.me/tokipona_bot) a! (Talk to me in [my private chat](t.me/tokipona_bot)).')
         return
     if language == 'en':
@@ -358,37 +362,28 @@ def help(update, context, language):
     else:
         help_filename = 'sona.txt'
 
-    with open(help_filename , 'r') as f:
+    help_path = Path(__file__).resolve().parent.parent / help_filename
+    with open(help_path, 'r', encoding='utf-8') as f:
         text = f.read()
 
-    result = context.bot.send_photo(update.message.chat_id, photo=id_photo_help, caption=text, parse_mode='Markdown')
+    await context.bot.send_photo(update.effective_chat.id, photo=id_photo_help, caption=text, parse_mode=ParseMode.MARKDOWN)
 
 
 def main():
-    # Get the dispatcher to register handlers
-    dp = updater.dispatcher
+    application = ApplicationBuilder().token(token_id).build()
 
     # on different commands - answer in Telegram
-    dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("sona", help_toki_pona))
-    dp.add_handler(CommandHandler("help", help_english))
-    dp.add_handler(CommandHandler("settings", settings))
-    dp.add_handler(CommandHandler("wilemi", settings))
-    dp.add_handler(InlineQueryHandler(inlinequery))
-    #dp.add_handler(ChosenInlineResultHandler(subtitle))
-
-    updater.dispatcher.add_handler(CallbackQueryHandler(buttons))
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("sona", help_toki_pona))
+    application.add_handler(CommandHandler("help", help_english))
+    application.add_handler(CommandHandler("settings", settings))
+    application.add_handler(CommandHandler("wilemi", settings))
+    application.add_handler(InlineQueryHandler(inlinequery))
+    application.add_handler(CallbackQueryHandler(buttons))
 
     # log all errors
-    dp.add_error_handler(error)
-
-    # Start the Bot
-    updater.start_polling()
-
-    # Run the bot until the you presses Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT. This should be used most of the time, since
-    # start_polling() is non-blocking and will stop the bot gracefully.
-    updater.idle()
+    application.add_error_handler(error_handler)
+    application.run_polling()
 
 
 if __name__ == "__main__":
