@@ -216,7 +216,7 @@ async def inlinequery(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     id_chat = update.effective_user.id
-    message = await context.bot.send_sticker(magic_chat_id, generate_url(query, id_chat), timeout=60)
+    message = await context.bot.send_sticker(magic_chat_id, generate_url(query, id_chat))
     results = [InlineQueryResultCachedSticker(
         id=str(uuid4()),
         sticker_file_id=message.sticker.file_id,
@@ -255,7 +255,7 @@ async def settings(update: Update, context: ContextTypes.DEFAULT_TYPE, edit_mess
                                reply_markup=reply_markup,
                                )
     else:
-        await context.bot.send_photo(update.effective_chat.id, photo=generate_url(query=photo_query, id_chat=update.effective_chat.id, image_format='jpg', size=50), caption=text, parse_mode=ParseMode.MARKDOWN, reply_markup=reply_markup, timeout=60)
+        await context.bot.send_photo(update.effective_chat.id, photo=generate_url(query=photo_query, id_chat=update.effective_chat.id, image_format='jpg', size=50), caption=text, parse_mode=ParseMode.MARKDOWN, reply_markup=reply_markup)
 
 
 async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
